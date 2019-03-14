@@ -60,19 +60,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameData\Modle\benghuai\AutoRotation.cs" />
-    <Compile Include="Assets\Scripts\ResourcesTest.cs" />
-    <Compile Include="Assets\Scripts\TestSerilize.cs" />
-    <None Include="Assets\test.xml" />
+    <Compile Include="Assets\Scripts\AssetBundleDataBase.cs" />
+    <Compile Include="Assets\Scripts\AssetBundleManager.cs" />
+    <Compile Include="Assets\Scripts\ClassObjectPool.cs" />
+    <Compile Include="Assets\Scripts\Crc32.cs" />
+    <Compile Include="Assets\Scripts\GameRoot.cs" />
+    <Compile Include="Assets\Scripts\ObjectsManager.cs" />
+    <Compile Include="Assets\Scripts\ResourcesManager.cs" />
+    <Compile Include="Assets\Scripts\Singleton.cs" />
+    <Compile Include="Assets\Scripts\TransferTest\ResourcesTest.cs" />
+    <Compile Include="Assets\Scripts\TransferTest\TestAssets.cs" />
+    <Compile Include="Assets\Scripts\TransferTest\TestSerilize.cs" />
     <None Include="Assets\GameData\Shaders\Water.shader" />
     <None Include="Assets\GameData\Modle\benghuai\benghuai.shader" />
     <None Include="Assets\GameData\Modle\benghuai\cloud.shader" />
     <None Include="Assets\GameData\Shaders\Skybox.shader" />
     <None Include="Assets\GameData\Shaders\Xray.shader" />
-    <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>G:/NewYLWS/Client/FrameworkLearning/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
-    </Reference>
+    <None Include="Assets\abBaseList.xml" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>G:/NewYLWS/Client/FrameworkLearning/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>G:/Homework/FrameworkLearning/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.PackageManagerUI.Editor">
+      <HintPath>G:/Homework/FrameworkLearning/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

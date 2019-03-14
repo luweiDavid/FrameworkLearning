@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 954463275
+CRC: 888920537
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -9,5 +9,8 @@ AssetBundleManifest:
       Name: sound
       Dependencies: {}
     Info_2:
+      Name: data
+      Dependencies: {}
+    Info_3:
       Name: attack
       Dependencies: {}

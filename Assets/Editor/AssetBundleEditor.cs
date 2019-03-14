@@ -122,6 +122,7 @@ public class AssetBundleEditor : Editor {
         foreach (string path in tempDic.Keys) {
             AssetBundleDataBase abBase = new AssetBundleDataBase();
             abBase.Path = path;
+            abBase.Crc = Crc32.GetCRC32(path);
             abBase.ABName = tempDic[path]; 
             abBase.AssetName = path.Remove(0, path.LastIndexOf("/") + 1);
             abBase.DependenceList = new List<string>();
@@ -144,18 +145,22 @@ public class AssetBundleEditor : Editor {
         //xml
         FileStream xmlfs = new FileStream(Application.dataPath + "/abBaseList.xml", FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         StreamWriter sw = new StreamWriter(xmlfs, System.Text.Encoding.UTF8);
-        XmlSerializer xmls = new XmlSerializer(typeof(AssetBundleDataBase));
+        XmlSerializer xmls = new XmlSerializer(typeof(AssetBundleData));
 
         //binary
         FileStream binaryfs = new FileStream(m_abDataBaseBytesPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         BinaryFormatter bf = new BinaryFormatter();
 
-        for (int i = 0; i < abData.abDataBaseList.Count; i++)
-        {
-            xmls.Serialize(sw, abData.abDataBaseList[i]);
-            bf.Serialize(binaryfs, abData.abDataBaseList[i]);
-        }
-       
+        //注意序列化时的对象类型要跟反序列化时的一致
+        #region   关于xml序列化的报错
+        //报错1： the type of the argument object "AssetBundleData" is not primitive 参数对象不是原始的  
+        //报错解析：要序列化的对象跟传入的对象不一致
+        //原因：1.(typeof(List<AssetBundleDataBase>))  (typeof(AssetBundleData)) 类型问题 
+        xmls.Serialize(sw, abData);
+        bf.Serialize(binaryfs, abData);
+
+        #endregion
+
         sw.Close();
         xmlfs.Close();
         binaryfs.Close();

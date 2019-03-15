@@ -5,8 +5,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 public class AssetBundleManager : Singleton<AssetBundleManager> {
-    //key：crc值， value：资源块
+    //key：path的crc值， value：资源数据块
     public Dictionary<uint, AssetBundleDataItem> m_crcDataItemDic = new Dictionary<uint, AssetBundleDataItem>();
+    //key: 资源名（AssetName）的crc值， value：单个ab包块
+    public Dictionary<uint, AssetBundleItem> m_crcABItemDic = new Dictionary<uint, AssetBundleItem>();
+    //AssetBundleItem的类对象池
+    public ClassObjectPool<AssetBundleItem> m_abItemPool = ObjectsManager.Instance.GetClassObjectPool<AssetBundleItem>(2000);
+
 
     public void LoadABConfigData() {
         AssetBundle abDataBundle = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/data");
@@ -23,15 +28,114 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
             item.Crc = abDataBase.Crc;
             item.ABName = abDataBase.ABName;
             item.AssetName = abDataBase.AssetName;
-            item.DependenceAB = abDataBase.DependenceList;
+            item.DependenceABList = abDataBase.DependenceList;
 
+            if (!m_crcDataItemDic.ContainsKey(item.Crc))
+            {
+                Debug.LogError(string.Format("重复加载资源： 包名:{0}, 资源名：{1}", item.ABName, item.AssetName));
+            }
+            else {
+                m_crcDataItemDic.Add(item.Crc, item);
+            }
         }
     }
-     
+
+    public AssetBundleDataItem FindABDataItem(uint pathCrc) {
+        AssetBundleDataItem abDataItem = null;
+        if (!m_crcDataItemDic.TryGetValue(pathCrc, out abDataItem)) {
+            Debug.LogError(string.Format("没有该crc：{0} 的AssetBundleDataItem", pathCrc));
+            return null;
+        } 
+
+        //依赖加载
+        if (abDataItem.DependenceABList != null) {
+            for (int i = 0; i < abDataItem.DependenceABList.Count; i++)
+            {
+                LoadABByAssetName(abDataItem.DependenceABList[i]);
+            }
+        }
+
+        abDataItem.AB = LoadABByAssetName(abDataItem.AssetName);
+
+        return abDataItem;
+    }
+
+    /// <summary>
+    /// 通过资源名字加载ab包，但是加载过的ab包需要保存起来  
+    /// </summary>
+    /// <param name="name">资源名</param>
+    /// <returns></returns>
+    private AssetBundle LoadABByAssetName(string name) {  
+        uint nameCrc = Crc32.GetCRC32(name);
+        AssetBundleItem abItem = null;
+
+        if (!m_crcABItemDic.TryGetValue(nameCrc, out abItem))
+        {
+            AssetBundle tempAB = null;
+            string fullPath = Config.AssetBundleTargetPath + "/" + name;
+            tempAB = AssetBundle.LoadFromFile(fullPath);
+            if (tempAB == null)
+            {
+                Debug.LogError("没有对应名字的AssetBundle");
+                return null;
+            }
+            abItem = m_abItemPool.Create(true);
+            abItem.AB = tempAB;
+            abItem.RefCount++;
+            m_crcABItemDic.Add(nameCrc, abItem);
+        }
+        else {
+            abItem.RefCount++;
+        }
+
+        return abItem.AB;
+    }
+
+    public void ReleaseAB(AssetBundleDataItem item) {
+        if (item == null) {
+            return;
+        }
+        //先释放依赖项
+        if (item.DependenceABList != null && item.DependenceABList.Count > 0) {
+            for (int i = 0; i < item.DependenceABList.Count; i++)
+            {
+                UnloadAB(item.DependenceABList[i]);
+            }
+        }
+        UnloadAB(item.AssetName);
+    }
+    private void UnloadAB(string name) {
+        AssetBundleItem abItem = null;
+        uint nameCrc = Crc32.GetCRC32(name);
+        if (m_crcABItemDic.TryGetValue(nameCrc, out abItem) && abItem != null) {
+            abItem.RefCount--;
+            if (abItem.RefCount <= 0 && abItem.AB != null) {
+                abItem.AB.Unload(true);
+                abItem.Reset();
+                m_abItemPool.Recycle(abItem);
+                m_crcABItemDic.Remove(nameCrc);
+            } 
+        }
+    }
+
+    public AssetBundleDataItem GetABDataItem(uint pathCrc) {
+        return m_crcDataItemDic[pathCrc];
+    }
 
 }
 
-//资源块
+//单个ab块 
+public class AssetBundleItem {
+    public AssetBundle AB = null;
+    public int RefCount = 0;
+
+    public void Reset() {
+        AB = null;
+        RefCount = 0;
+    }
+} 
+
+//资源数据块
 public class AssetBundleDataItem {
     //crc码
     public uint Crc = 0;
@@ -40,8 +144,15 @@ public class AssetBundleDataItem {
     //资源名
     public string AssetName = string.Empty;
     //依赖项表
-    public List<string> DependenceAB = null;
+    public List<string> DependenceABList = null;
     //ab包对应的ab对象
-    public AssetBundle AB = null; 
+    public AssetBundle AB = null;
+    //---------------------------------------------
+    //资源生成的对象
+    public object Obj = null;
+    //最后的使用时间
+    public Time LastUsedTime;
+    //引用次数
+    public int RefCount = 0;
 }
  

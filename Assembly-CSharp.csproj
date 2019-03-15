@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\AssetBundleDataBase.cs" />
     <Compile Include="Assets\Scripts\AssetBundleManager.cs" />
     <Compile Include="Assets\Scripts\ClassObjectPool.cs" />
+    <Compile Include="Assets\Scripts\Config.cs" />
     <Compile Include="Assets\Scripts\Crc32.cs" />
     <Compile Include="Assets\Scripts\GameRoot.cs" />
     <Compile Include="Assets\Scripts\ObjectsManager.cs" />

@@ -7,11 +7,7 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 public class AssetBundleEditor : Editor {
-    private static string m_abDataBaseBytesPath = "Assets/Scripts/Data/ABDataBase.bytes";
-
-    public static string ABCONFIGASSETSPATH = "Assets/Editor/ABConfig.asset";
-
-    public static string m_AssetBundleTargetPath = Application.streamingAssetsPath;
+    
 
     //key值为ABName， value为路径Path
     public static Dictionary<string, string> m_AllFileDir = new Dictionary<string, string>();
@@ -24,7 +20,7 @@ public class AssetBundleEditor : Editor {
     [MenuItem("Tools/Build")]
     public static void Build()
     { 
-        ABConfig abConfig = AssetDatabase.LoadAssetAtPath<ABConfig>(ABCONFIGASSETSPATH);
+        ABConfig abConfig = AssetDatabase.LoadAssetAtPath<ABConfig>(Config.ABCONFIGASSETSPATH);
 
         m_AllFileDir.Clear();
         m_filterPathList.Clear();
@@ -113,7 +109,7 @@ public class AssetBundleEditor : Editor {
         #endregion
 
         //执行打包
-        BuildPipeline.BuildAssetBundles(m_AssetBundleTargetPath, BuildAssetBundleOptions.ChunkBasedCompression, EditorUserBuildSettings.activeBuildTarget);
+        BuildPipeline.BuildAssetBundles(Config.AssetBundleTargetPath, BuildAssetBundleOptions.ChunkBasedCompression, EditorUserBuildSettings.activeBuildTarget);
     }
 
     public static void CreateConfigTable(Dictionary<string,string> tempDic) {
@@ -148,7 +144,7 @@ public class AssetBundleEditor : Editor {
         XmlSerializer xmls = new XmlSerializer(typeof(AssetBundleData));
 
         //binary
-        FileStream binaryfs = new FileStream(m_abDataBaseBytesPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+        FileStream binaryfs = new FileStream(Config.ABDataBaseBytesPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         BinaryFormatter bf = new BinaryFormatter();
 
         //注意序列化时的对象类型要跟反序列化时的一致
@@ -168,7 +164,7 @@ public class AssetBundleEditor : Editor {
 
     public static void DeleteNotExistABName() {
         string[] allbundles = AssetDatabase.GetAllAssetBundleNames();
-        DirectoryInfo dirInfo = new DirectoryInfo(m_AssetBundleTargetPath);
+        DirectoryInfo dirInfo = new DirectoryInfo(Config.AssetBundleTargetPath);
         FileInfo[] filesArray = dirInfo.GetFiles("*");
         foreach (FileInfo info in filesArray) {
             if (!info.FullName.EndsWith(".meta") && !IsExistInABName(info.Name, allbundles))

@@ -8,4 +8,5 @@ public class GameRoot : MonoBehaviour {
     {
         AssetBundleManager.Instance.LoadABConfigData();
     }
+    
 }

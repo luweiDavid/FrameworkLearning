@@ -47,7 +47,7 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
             return null;
         } 
 
-        //依赖加载
+        //依赖包加载
         if (abDataItem.DependenceABList != null) {
             for (int i = 0; i < abDataItem.DependenceABList.Count; i++)
             {
@@ -73,7 +73,7 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
         {
             AssetBundle tempAB = null; 
             string fullPath = Config.AssetBundleTargetPath + "/" + abName;  
-            tempAB = AssetBundle.LoadFromFile(fullPath);
+            tempAB = AssetBundle.LoadFromFile(fullPath);   //加载ab包
             if (tempAB == null)
             {
                 Debug.LogError("没有对应名字的AssetBundle");
@@ -109,17 +109,17 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
         uint nameCrc = Crc32.GetCRC32(name);
         if (m_crcABItemDic.TryGetValue(nameCrc, out abItem) && abItem != null)
         {
-            abItem.RefCount--; 
+            abItem.RefCount--;
             if (abItem.RefCount <= 0 && abItem.AB != null)
-            { 
+            {
                 abItem.AB.Unload(true);
                 abItem.Reset();
                 m_abItemPool.Recycle(abItem);
                 m_crcABItemDic.Remove(nameCrc);
-            }
+            } 
         }
         else {
-            Debug.LogError("没有对应ab包的crc");
+            Debug.LogError("没有对应crc的ab包");
         }
     }
 
@@ -159,9 +159,10 @@ public class AssetBundleDataItem {
     public int ObjGuid = 0;
     //最后的使用时间
     public float LastUsedTime;
+    //是否在切换场景时清除
+    public bool IsClear = true;
     //引用次数
-    protected int refCount = 0;
-
+    protected int refCount = 0;  
     public int RefCount {
         get { return refCount; }
         set {

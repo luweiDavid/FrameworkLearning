@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\ObjectsManager.cs" />
     <Compile Include="Assets\Scripts\ResourcesManager.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />
+    <Compile Include="Assets\Scripts\SomeTest\CoroutineTest.cs" />
     <Compile Include="Assets\Scripts\TransferTest\ResourcesTest.cs" />
     <Compile Include="Assets\Scripts\TransferTest\TestAssets.cs" />
     <Compile Include="Assets\Scripts\TransferTest\TestSerilize.cs" />

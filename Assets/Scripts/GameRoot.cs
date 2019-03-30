@@ -7,8 +7,10 @@ using UnityEditor;
 public class GameRoot : MonoBehaviour {   
     public const bool m_UseAssetBundleInEditor = true;
        
-    public AudioSource audioS;
-    private AudioClip clip;
+    //public AudioSource audioS;
+    //private AudioClip clip;
+
+    private GameObject gameObj;
     private void Awake()
     {
         GameObject.DontDestroyOnLoad(gameObject);
@@ -25,13 +27,14 @@ public class GameRoot : MonoBehaviour {
 
         //预加载
         //ResourcesManager.Instance.PreloadResources("Assets/GameData/Sounds/senlin.mp3");
-    }
 
-    void DealFinish(string path,UnityEngine.Object obj, object param1, object param2, object param3) {
-        clip = obj as AudioClip;
-        audioS.clip = clip;
-        audioS.Play();
-    }
+        gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab",true);
+    } 
+    //void DealFinish(string path,UnityEngine.Object obj, object param1, object param2, object param3) {
+    //    clip = obj as AudioClip;
+    //    audioS.clip = clip;
+    //    audioS.Play();
+    //}
 
     private void Update()
     {
@@ -46,6 +49,26 @@ public class GameRoot : MonoBehaviour {
         //if (Input.GetKeyDown(KeyCode.D)) {
         //    ResourcesManager.Instance.ReleaseResources(clip, true);
         //}
+
+        if (Input.GetKeyDown(KeyCode.A)) {
+            //回收
+            ObjectsManager.Instance.ReleaseGameObject(gameObj); 
+        }
+        if (Input.GetKeyDown(KeyCode.D)) {
+            //从对象池中加载 
+            gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab",true);
+        }
+
+        if (Input.GetKeyDown(KeyCode.W)) {
+            ObjectsManager.Instance.ReleaseGameObject(gameObj, 0);
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+#if UNITY_EDITOR 
+        AssetBundle.UnloadAllAssetBundles(true);
+#endif
     }
 
 }

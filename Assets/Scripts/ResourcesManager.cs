@@ -63,13 +63,13 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         return tempObj as T;
     }
 
-
+    #region   提供给ObjectsManager的接口
     /// <summary>
     /// 给ObjectsManager提供的接口：加载ResourceObj的ABDataItem等
     /// </summary>
     /// <param name="path"></param>
     /// <param name="resObj"></param>
-    public bool LoadResourceObj(string path, ref ResourceObj resObj) {
+    public bool LoadResourceGameObj(string path, ref ResourceGameObject resObj) {
         if (resObj == null || string.IsNullOrEmpty(path)) {
             return false;
         }
@@ -77,7 +77,7 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         AssetBundleDataItem dataItem = null;
         dataItem = GetCacheABDataItem(pathCrc);
         if (dataItem != null && dataItem.Obj != null) {
-            resObj.ABDataItem = dataItem;
+            resObj.ABDataItem = dataItem; 
             return true;
         }
 
@@ -116,8 +116,67 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         dataItem.IsClear = resObj.IsClear;   
 
         return true;
+    } 
+     
+    /// <summary>
+    /// 从对象池中获取时要增加ABDataItem的引用计数
+    /// </summary> 
+    public int IncreaseResGoRefCount(ResourceGameObject resGo, int count = 1) { 
+        return resGo != null ? IncreaseRefCount(resGo.Crc, count) : 0;
     }
 
+    private int IncreaseRefCount(uint crc, int count = 1) { 
+        AssetBundleDataItem dataItem = null;
+        if (!m_crcAssetDic.TryGetValue(crc, out dataItem) || dataItem == null) { 
+            return 0;
+        }
+        
+        dataItem.RefCount += count; 
+
+        return dataItem.RefCount;
+    }
+
+    /// <summary>
+    /// 回收到对象池时减少ABDataItem的引用计数
+    /// </summary> 
+    public int DecreaseResGoRefCount(ResourceGameObject resGo, int count = 1)
+    { 
+        return resGo != null ? DecreaseRefCount(resGo.Crc, count) : 0;
+    }
+
+    private int DecreaseRefCount(uint crc, int count = 1) { 
+        AssetBundleDataItem dataItem = null;
+        if (!m_crcAssetDic.TryGetValue(crc, out dataItem) || dataItem == null) {
+            return 0;
+        }
+        dataItem.RefCount -= count;
+
+        return dataItem.RefCount;
+    } 
+
+    #endregion
+
+    /// <summary>
+    /// 根据resGo释放资源
+    /// </summary> 
+    public bool ReleaseResources(ResourceGameObject resGo, bool isDestroy = true) {
+        if (resGo == null) {
+            return false;
+        } 
+        AssetBundleDataItem dataItem = m_crcAssetDic[resGo.Crc];
+        if (dataItem == null)
+        {
+            Debug.LogError(string.Format("不存在对应pathCrc的ABDataItem: {0}, {1}", resGo.Crc, resGo.CloneGo.name));
+            return false;
+        }
+        //销毁对象
+        GameObject.Destroy(resGo.CloneGo);
+
+        dataItem.RefCount--;
+        ReleaseABDataItem(dataItem, isDestroy);
+        return true; 
+    } 
+     
     /// <summary>
     /// 释放资源， 根据Object清除
     /// (调用一次释放， dataItem的引用次数减1，直到引用次数小于等于0时，才决定是删除掉，还是加进m_noRefDataItemDLMap)
@@ -175,7 +234,7 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             return;
         }
 
-        //m_crcAssetDic.Remove(dataItem.Crc);      //从有计数的字典中移除 
+        m_crcAssetDic.Remove(dataItem.Crc);      //从有计数的字典中移除 
         //if (!isDestroy) {
         //    //如果不销毁就加进m_noRefDataItemDLMap的表头
         //    m_noRefDataItemDLMap.InsertToHead(dataItem);
@@ -337,7 +396,9 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         AssetBundleDataItem dataItem = GetCacheABDataItem(pathCrc);
         if (dataItem != null && dataItem.Obj != null)
         {
-            dealFinish(path, dataItem.Obj, param1, param2, param3);
+            if (dealFinish != null) {
+                dealFinish(path, dataItem.Obj, param1, param2, param3);
+            } 
             return;
         }
         
@@ -360,6 +421,10 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         callBack.Param2 = param2;
         callBack.Param3 = param3;
         asyncDataItem.CallBackList.Add(callBack);
+    }
+
+    public void AsyncLoadResource(string path, ResourceGameObject resGo) {
+
     }
 
     private IEnumerator AsyncLoadCoroutine() {
@@ -458,7 +523,6 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             }
         }
     } 
-
 }
 
 /// <summary>
@@ -492,6 +556,9 @@ public class AsyncLoadDataItem {
 }
 //异步加载完成后的回调
 public delegate void AsyncLoadDealFinish(string path, Object obj, object param1 = null, object param2 = null, object param3 = null);
+
+//异步加载ResGo的回调
+public delegate void AsyncLoadResGoDealFinish(string path, ResourceGameObject resGo, object param1 = null, object param2 = null, object param3 = null);
 
 /// <summary>
 /// 异步加载的回调类

@@ -63,6 +63,7 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         return tempObj as T;
     }
 
+    //-----------------------------------------------------------------------
     #region   提供给ObjectsManager的接口
     /// <summary>
     /// 给ObjectsManager提供的接口：加载ResourceObj的ABDataItem等
@@ -152,9 +153,7 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         dataItem.RefCount -= count;
 
         return dataItem.RefCount;
-    } 
-
-    #endregion
+    }  
 
     /// <summary>
     /// 根据resGo释放资源
@@ -175,8 +174,10 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         dataItem.RefCount--;
         ReleaseABDataItem(dataItem, isDestroy);
         return true; 
-    } 
-     
+    }
+    #endregion
+    //------------------------------------------------------------------------
+
     /// <summary>
     /// 释放资源， 根据Object清除
     /// (调用一次释放， dataItem的引用次数减1，直到引用次数小于等于0时，才决定是删除掉，还是加进m_noRefDataItemDLMap)
@@ -241,6 +242,8 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         //    return;
         //}
 
+        //释放改dataItem对应的resGo的所有数据
+        ObjectsManager.Instance.ClearCacheByCrc(dataItem.Crc);
         //如果销毁，就释放dataitem 
         AssetBundleManager.Instance.ReleaseAB(dataItem);
         if (dataItem.Obj != null) {
@@ -251,7 +254,8 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             Resources.UnloadAsset(dataItem.Obj);
             Resources.UnloadUnusedAssets();
 #endif
-        }
+        } 
+        
     }
 
     public void WashOut() {    //TODO
@@ -356,7 +360,35 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         CacheABDataItem(path, ref dataItem, obj, 0);
     }
 
+    public bool CancelAsyncLoad(ResourceGameObject resGo) {
+        AsyncLoadDataItem asyncDataItem = null;
 
+        //判断正在加载的字典中是否包含asyncDataItem， 并且没有进入异步的for循环
+        if (m_asyncLoadingItemDic.TryGetValue(resGo.Crc, out asyncDataItem) && m_asyncLoadItemListArray[(int)resGo.Priority].Contains(asyncDataItem)) {
+            //重置callbackList
+            var callBackList = asyncDataItem.CallBackList;
+            for (int i = callBackList.Count - 1; i >= 0; i--)
+            {
+                //回收回调（可能有多个回调）
+                AsyncLoadCallBack callBack = callBackList[i];
+                if (callBack != null) {
+                    callBack.Reset();
+                    callBackList.Remove(callBack);
+                    m_asyncCallBackPool.Recycle(callBack);
+                }
+            }
+            if (callBackList.Count <= 0) {
+                //只有全部回调都移除了才能真正取消异步加载
+                asyncDataItem.Reset();
+                m_asyncLoadingItemDic.Remove(resGo.Crc);
+                m_asyncLoadItemListArray[(int)resGo.Priority].Remove(asyncDataItem);
+                m_asyncDataItemPool.Recycle(asyncDataItem);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     //-------------------------以下处理异步加载  ------------------------------------------------------- 
     private MonoBehaviour m_StartMono;  
@@ -370,8 +402,7 @@ public class ResourcesManager : Singleton<ResourcesManager> {
     public ClassObjectPool<AsyncLoadCallBack> m_asyncCallBackPool = ObjectsManager.Instance.GetClassObjectPool<AsyncLoadCallBack>(100);
 
     //异步加载的最长时间，（微秒）
-    private const long MAXASYNCLOADTIME = 200000;
-
+    private const long MAXASYNCLOADTIME = 200000; 
 
     public void Init(MonoBehaviour mono) {
         m_StartMono = mono;
@@ -422,9 +453,33 @@ public class ResourcesManager : Singleton<ResourcesManager> {
         callBack.Param3 = param3;
         asyncDataItem.CallBackList.Add(callBack);
     }
+     
+    public void AsyncLoadResource(string path, ResourceGameObject resGo, AsyncLoadResGoDealFinish resGoDealFinish) {
+        uint pathCrc = Crc32.GetCRC32(path);
+        AssetBundleDataItem dataItem = GetCacheABDataItem(pathCrc);
+        if (dataItem != null) {
+            resGo.ABDataItem = dataItem;
 
-    public void AsyncLoadResource(string path, ResourceGameObject resGo) {
+            if (resGoDealFinish != null) {
+                resGoDealFinish(path, resGo, resGo.Param1, resGo.Param2, resGo.Param3);
+            }
+            return;
+        }
 
+        AsyncLoadDataItem asyncDataItem = null;
+        if (!m_asyncLoadingItemDic.TryGetValue(pathCrc, out asyncDataItem) && asyncDataItem == null)
+        { 
+            asyncDataItem = m_asyncDataItemPool.Create(true);
+            asyncDataItem.Path = path;
+            asyncDataItem.Crc = pathCrc;
+            asyncDataItem.Priority = resGo.Priority;
+            m_asyncLoadItemListArray[(int)resGo.Priority].Add(asyncDataItem);   
+            m_asyncLoadingItemDic.Add(pathCrc, asyncDataItem);           
+        }
+        AsyncLoadCallBack callBack = m_asyncCallBackPool.Create(true);
+        callBack.ResGoDealFinish = resGoDealFinish;
+        callBack.resGo = resGo; 
+        asyncDataItem.CallBackList.Add(callBack);
     }
 
     private IEnumerator AsyncLoadCoroutine() {
@@ -436,7 +491,7 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             for (int i = 0; i < (int)AsyncLoadPriority.Num; i++)  //每次循环都是从最高优先级开始的（0）
             { 
                 List<AsyncLoadDataItem> asyncDataItemList = m_asyncLoadItemListArray[i];
-                if (asyncDataItemList.Count <= 0)
+                if (asyncDataItemList == null || asyncDataItemList.Count <= 0)
                 {
                     continue;
                 }
@@ -486,15 +541,25 @@ public class ResourcesManager : Singleton<ResourcesManager> {
                 CacheABDataItem(asyncDataItem.Path, ref dataItem, obj, callBackList.Count);
 
                 //执行回调列表
-                
                 for (int j = 0; j < callBackList.Count; j++)
                 {
                     AsyncLoadCallBack callBack = null;
                     callBack = callBackList[j];
                     if (callBack != null) {
+                        //不需要实例化资源的异步加载回调
                         if (callBack.DealFinish != null) {
                             callBack.DealFinish(asyncDataItem.Path, obj, callBack.Param1, callBack.Param2, callBack.Param3);
                             callBack.DealFinish = null;
+                        }
+
+                        //实例化对象异步加载回调
+                        if (callBack.ResGoDealFinish != null && callBack.resGo != null) {
+                            //执行这个回调会赋值resGo的abDataItem，（因为在协程里面才是加载dataItem的）
+                            ResourceGameObject resGo = callBack.resGo;
+                            resGo.ABDataItem = dataItem;
+                            callBack.ResGoDealFinish(asyncDataItem.Path, resGo, resGo.Param1, resGo.Param2, resGo.Param3);
+                            callBack.ResGoDealFinish = null;
+                            resGo = null;
                         }
 
                         callBack.Reset();  //重置
@@ -536,7 +601,7 @@ public enum AsyncLoadPriority {
 }
 
 /// <summary>
-/// 数据类（中间类）
+/// 异步加载的中间类，数据类 
 /// </summary>
 public class AsyncLoadDataItem {
     public List<AsyncLoadCallBack> CallBackList = new List<AsyncLoadCallBack>();
@@ -564,6 +629,11 @@ public delegate void AsyncLoadResGoDealFinish(string path, ResourceGameObject re
 /// 异步加载的回调类
 /// </summary>
 public class AsyncLoadCallBack {
+    //加载完成的回调，（提供给异步加载实例化对象的接口）
+    public AsyncLoadResGoDealFinish ResGoDealFinish = null;
+    //方便参数赋值，所以直接加个resGo引用
+    public ResourceGameObject resGo = null;
+//-------------------------------------------------------
     //加载完成的回调
     public AsyncLoadDealFinish DealFinish = null;
     //回调参数
@@ -572,10 +642,12 @@ public class AsyncLoadCallBack {
     public object Param3 = null;
 
     public void Reset() {
+        ResGoDealFinish = null;
+        resGo = null;
         DealFinish = null;
         Param1 = null;
         Param2 = null;
-        Param3 = null;
+        Param3 = null; 
     }
 }
 

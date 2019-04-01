@@ -28,7 +28,9 @@ public class GameRoot : MonoBehaviour {
         //预加载
         //ResourcesManager.Instance.PreloadResources("Assets/GameData/Sounds/senlin.mp3");
 
-        gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab",true);
+        //gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab",true);
+
+        ObjectsManager.Instance.PreloadGameObj("Assets/GameData/Prefabs/Attack.prefab", 20);
     } 
     //void DealFinish(string path,UnityEngine.Object obj, object param1, object param2, object param3) {
     //    clip = obj as AudioClip;
@@ -49,19 +51,29 @@ public class GameRoot : MonoBehaviour {
         //if (Input.GetKeyDown(KeyCode.D)) {
         //    ResourcesManager.Instance.ReleaseResources(clip, true);
         //}
+         
+        //if (Input.GetKeyDown(KeyCode.D))
+        //{
+        //    //从对象池中加载 
+        //    gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab", true);
+        //}
 
+        //if (Input.GetKeyDown(KeyCode.W)) {
+        //    ObjectsManager.Instance.ReleaseGameObject(gameObj, 0);
+        //}
         if (Input.GetKeyDown(KeyCode.A)) {
+            ObjectsManager.Instance.AsyncInstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab", InstantiateDealFinish, AsyncLoadPriority.High);
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
             //回收
-            ObjectsManager.Instance.ReleaseGameObject(gameObj); 
+            ObjectsManager.Instance.ReleaseGameObject(gameObj);
         }
-        if (Input.GetKeyDown(KeyCode.D)) {
-            //从对象池中加载 
-            gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab",true);
-        }
+    }
 
-        if (Input.GetKeyDown(KeyCode.W)) {
-            ObjectsManager.Instance.ReleaseGameObject(gameObj, 0);
-        }
+    void InstantiateDealFinish(string path, UnityEngine.Object obj, object param1, object param2, object param3) {
+        gameObj = obj as GameObject;
+        Debug.Log("玩也");
     }
 
     private void OnApplicationQuit()

@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 1871419802
+CRC: 2429071428
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -13,4 +13,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_3:
       Name: attack
+      Dependencies: {}
+    Info_4:
+      Name: mainpanel
       Dependencies: {}

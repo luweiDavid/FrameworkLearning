@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Assets\Editor\ABConfig.cs" />
     <Compile Include="Assets\Editor\AssetBundleEditor.cs" />
+    <Compile Include="Assets\Editor\OfflineDataEditor.cs" />
     <Compile Include="Assets\Editor\TestLoad.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>G:/Homework/FrameworkLearning/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

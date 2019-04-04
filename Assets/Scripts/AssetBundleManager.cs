@@ -29,7 +29,7 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
             item.ABName = abDataBase.ABName;
             item.AssetName = abDataBase.AssetName;
             item.DependenceABList = abDataBase.DependenceList;
-
+            //Crc="4136711088" ABName="mainpanel" AssetName="MainPanel.prefab" 
             if (m_crcDataItemDic.ContainsKey(item.Crc))
             {
                 Debug.LogError(string.Format("重复加载资源： 包名:{0}, 资源名：{1}", item.ABName, item.AssetName));

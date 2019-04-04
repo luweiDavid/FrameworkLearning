@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEditor;
+using UnityEngine.EventSystems;
 
 public class GameRoot : MonoBehaviour {   
-    public const bool m_UseAssetBundleInEditor = true;
+    public const bool m_UseAssetBundleInEditor = false;
        
     //public AudioSource audioS;
     //private AudioClip clip;
@@ -18,10 +19,20 @@ public class GameRoot : MonoBehaviour {
         ResourcesManager.Instance.Init(this);
 
         ObjectsManager.Instance.Init(transform.Find("RecycleObjectsTr"),transform.Find("SceneTr"));
+
+
+        #region
+        var uiroot = GameObject.Find("UIRoot").GetComponent<Transform>();
+        var uicamera = GameObject.Find("UICamera").GetComponent<Camera>();
+        var entsys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
+        UIManager.Instance.Init(uiroot, uicamera, entsys);
+        #endregion
     }
 
     public void Start()
     {
+        UIManager.Instance.OpenWindow<MainPanel>(UIPanelName.MainPanel);
+
         //clip = ResourcesManager.Instance.LoadResources<AudioClip>("Assets/GameData/Sounds/senlin.mp3");
         //ResourcesManager.Instance.AsyncLoadResource("Assets/GameData/Sounds/senlin.mp3", DealFinish, AsyncLoadPriority.High);
 
@@ -30,7 +41,7 @@ public class GameRoot : MonoBehaviour {
 
         //gameObj = ObjectsManager.Instance.InstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab",true);
 
-        ObjectsManager.Instance.PreloadGameObj("Assets/GameData/Prefabs/Attack.prefab", 20);
+        //ObjectsManager.Instance.PreloadGameObj("Assets/GameData/Prefabs/Attack.prefab", 20);
     } 
     //void DealFinish(string path,UnityEngine.Object obj, object param1, object param2, object param3) {
     //    clip = obj as AudioClip;
@@ -61,14 +72,14 @@ public class GameRoot : MonoBehaviour {
         //if (Input.GetKeyDown(KeyCode.W)) {
         //    ObjectsManager.Instance.ReleaseGameObject(gameObj, 0);
         //}
-        if (Input.GetKeyDown(KeyCode.A)) {
-            ObjectsManager.Instance.AsyncInstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab", InstantiateDealFinish, AsyncLoadPriority.High);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            //回收
-            ObjectsManager.Instance.ReleaseGameObject(gameObj);
-        }
+        //if (Input.GetKeyDown(KeyCode.A)) {
+        //    ObjectsManager.Instance.AsyncInstantiateGameObj("Assets/GameData/Prefabs/Attack.prefab", InstantiateDealFinish, AsyncLoadPriority.High);
+        //}
+        //if (Input.GetKeyDown(KeyCode.B))
+        //{
+        //    //回收
+        //    ObjectsManager.Instance.ReleaseGameObject(gameObj);
+        //}
     }
 
     void InstantiateDealFinish(string path, UnityEngine.Object obj, object param1, object param2, object param3) {

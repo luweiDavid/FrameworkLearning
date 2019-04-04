@@ -36,6 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4457265687570514}
   - component: {fileID: 95337506594902680}
+  - component: {fileID: 114337052391628884}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Untagged
@@ -382,6 +383,48 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114337052391628884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1626772612355614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b5d9a8f0c746c1478f108db3d9af72e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_rigBody: {fileID: 0}
+  m_collider: {fileID: 0}
+  m_allTransArray:
+  - {fileID: 4457265687570514}
+  - {fileID: 4122513545638336}
+  - {fileID: 4009800858660278}
+  - {fileID: 4886943711701802}
+  - {fileID: 4290654509301604}
+  - {fileID: 4877241086519628}
+  m_allTransActiveStateArray: 000000000000
+  m_allPosArray:
+  - {x: 0, y: 0, z: 0}
+  - {x: -0.00007890473, y: -0.012334824, z: -0.012802602}
+  - {x: -2.5894177, y: 15.203817, z: -1.5728939}
+  - {x: -0.00007890473, y: -0.012334824, z: -0.012802602}
+  - {x: -0, y: 0, z: -0.000000029802322}
+  - {x: -1.325592, y: 0, z: -0.000000029802322}
+  m_allRotArray:
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  - {x: 0.5595559, y: -0.55855083, z: 0.42740768, w: -0.4384527}
+  - {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  - {x: -0.7071068, y: -1.7319123e-16, z: 0, w: 0.7071068}
+  - {x: -0.7071068, y: -1.7319123e-16, z: 0, w: 0.7071068}
+  m_allScaleArray:
+  - {x: 1, y: 1, z: 1}
+  - {x: 2.6343741, y: 2.6343741, z: 2.6343741}
+  - {x: 1, y: 1.0000002, z: 1}
+  - {x: 2.6343741, y: 2.6343741, z: 2.6343741}
+  - {x: 1, y: 1, z: 1}
+  - {x: 1, y: 1, z: 1}
 --- !u!137 &137747691845042212
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

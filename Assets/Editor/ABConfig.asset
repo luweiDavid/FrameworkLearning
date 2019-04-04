@@ -20,3 +20,5 @@ MonoBehaviour:
     Path: Assets\GameData\Sounds
   - ABName: data
     Path: Assets\Scripts\Data
+  - ABName: texture
+    Path: Assets\GameData\Textures

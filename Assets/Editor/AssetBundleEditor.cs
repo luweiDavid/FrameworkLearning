@@ -40,14 +40,14 @@ public class AssetBundleEditor : Editor {
         string[] prefabGuidArray = AssetDatabase.FindAssets("t:prefab", abConfig.m_AllPrefabPath.ToArray()); 
         for (int i = 0; i < prefabGuidArray.Length;i++) {
             string path = AssetDatabase.GUIDToAssetPath(prefabGuidArray[i]);
-            EditorUtility.DisplayProgressBar("查找path", "prefab:" + path, (float)i / prefabGuidArray.Length);
+            EditorUtility.DisplayProgressBar("查找path", "prefab:" + path, (float)i / prefabGuidArray.Length); 
 
             GameObject go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             //查找到prefab的路径后，检索出所有dependence（依赖项）
             string[] tempDependenceArray = AssetDatabase.GetDependencies(path); 
             List<string> tempList = new List<string>();
-            if (!FilterPath(path)) {
-                for (int j = 1; j < tempDependenceArray.Length; j++) {
+            if (!FilterPath(path)) { 
+                for (int j = 0; j < tempDependenceArray.Length; j++) {
                     if (!FilterPath(tempDependenceArray[j])&&!tempDependenceArray[j].EndsWith(".cs")) {
                         m_filterPathList.Add(tempDependenceArray[j]); 
                         tempList.Add(tempDependenceArray[j]);
@@ -59,7 +59,7 @@ public class AssetBundleEditor : Editor {
                 Debug.LogError("存在相同名称的prefab：" + go.name);
             }
             else {
-                m_singlePrefabAllDepPathDic.Add(go.name, tempList);
+                m_singlePrefabAllDepPathDic.Add(go.name, tempList); 
             }  
         } 
 
@@ -91,7 +91,8 @@ public class AssetBundleEditor : Editor {
         string[] allBundles = AssetDatabase.GetAllAssetBundleNames();   //直接得到不带后缀的包名
         //key为全路径，value为bundlename
         Dictionary<string, string> tempDic = new Dictionary<string, string>();
-        for (int i = 0; i < allBundles.Length; i++) { 
+        for (int i = 0; i < allBundles.Length; i++) {
+            //Debug.Log(allBundles[i] + "    ----");
             string[] bundlePathArray = AssetDatabase.GetAssetPathsFromAssetBundle(allBundles[i]);
             for (int j = 0; j < bundlePathArray.Length; j++) {
                 //Debug.Log(allBundles[i] + "_______" + bundlePathArray[j]);
@@ -187,7 +188,8 @@ public class AssetBundleEditor : Editor {
     }
 
     public static void SetABName(string name, string path) {
-        AssetImporter importer = AssetImporter.GetAtPath(path);
+        AssetImporter importer = AssetImporter.GetAtPath(path); 
+        
         if (importer == null)
         {
             Debug.LogError("不存在此路径：" + path);
@@ -197,20 +199,24 @@ public class AssetBundleEditor : Editor {
         }
     }
 
-    public static void SetABName(string name,List<string> pathList) {
+    public static void SetABName(string name,List<string> pathList) { 
         for (int i = 0; i < pathList.Count; i++) {
             SetABName(name, pathList[i]);
-        }
+            //Debug.Log(pathList[i]);
+        } 
     }
 
     public static bool FilterPath(string path)
     {
         //Assets/GameData/Test                  1
         //Assets/GameData/TestTT/a.shader       2
-        //像上面的情况，路径2是包含路径1的，但这种情况不能过滤掉路径1
+        //像1,2的情况，路径2是包含路径1的，但这种情况不能过滤掉路径1
+        
         for (int i = 0; i < m_filterPathList.Count; i++) {
             if (path == m_filterPathList[i]|| path.Contains(m_filterPathList[i])){
-                if (path.Replace(m_filterPathList[i], "")[0] == '/') {
+                //Debug.Log(path); 
+                //Debug.Log(m_filterPathList[i] + "   ===    " + path.Contains(m_filterPathList[i]));
+                if (path.Replace(m_filterPathList[i], "").Length > 0 && path.Replace(m_filterPathList[i], "")[0] == '/') {
                     return true;
                 }
             }

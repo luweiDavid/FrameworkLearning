@@ -7,8 +7,6 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 public class AssetBundleEditor : Editor {
-    
-
     //key值为ABName， value为路径Path
     public static Dictionary<string, string> m_AllFileDir = new Dictionary<string, string>();
     //需要过滤的path   (因为ab打包的逻辑是：先处理文件夹的，再处理单个文件的，所以
@@ -17,10 +15,10 @@ public class AssetBundleEditor : Editor {
     //单个prefab对应的所有依赖项
     public static Dictionary<string, List<string>> m_singlePrefabAllDepPathDic = new Dictionary<string, List<string>>();
 
-    [MenuItem("Tools/Build")]
+    [MenuItem("Tools/BuildAssetBundle")]
     public static void Build()
     { 
-        ABConfig abConfig = AssetDatabase.LoadAssetAtPath<ABConfig>(Config.ABCONFIGASSETSPATH);
+        ABConfig abConfig = AssetDatabase.LoadAssetAtPath<ABConfig>(PathConfig.ABCONFIGASSETSPATH);
 
         m_AllFileDir.Clear();
         m_filterPathList.Clear();
@@ -110,7 +108,16 @@ public class AssetBundleEditor : Editor {
         #endregion
 
         //执行打包
-        BuildPipeline.BuildAssetBundles(Config.AssetBundleTargetPath, BuildAssetBundleOptions.ChunkBasedCompression, EditorUserBuildSettings.activeBuildTarget);
+        AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(PathConfig.Instance.GetABTargetPath(), 
+            BuildAssetBundleOptions.ChunkBasedCompression, EditorUserBuildSettings.activeBuildTarget);
+
+        if (manifest == null)
+        {
+            Debug.LogError("AssetBundle 打包失败");
+        }
+        else {
+            Debug.Log("AssetBundle 打包完成");
+        }
     }
 
     public static void CreateConfigTable(Dictionary<string,string> tempDic) {
@@ -145,7 +152,7 @@ public class AssetBundleEditor : Editor {
         XmlSerializer xmls = new XmlSerializer(typeof(AssetBundleData));
 
         //binary
-        FileStream binaryfs = new FileStream(Config.ABDataBaseBytesPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+        FileStream binaryfs = new FileStream(PathConfig.ABDataBaseBytesPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         BinaryFormatter bf = new BinaryFormatter();
 
         //注意序列化时的对象类型要跟反序列化时的一致
@@ -165,11 +172,12 @@ public class AssetBundleEditor : Editor {
 
     public static void DeleteNotExistABName() {
         string[] allbundles = AssetDatabase.GetAllAssetBundleNames();
-        DirectoryInfo dirInfo = new DirectoryInfo(Config.AssetBundleTargetPath);
+        DirectoryInfo dirInfo = new DirectoryInfo(PathConfig.Instance.GetABTargetPath());
         FileInfo[] filesArray = dirInfo.GetFiles("*");
         foreach (FileInfo info in filesArray) {
-            if (!info.FullName.EndsWith(".meta") && !IsExistInABName(info.Name, allbundles))
+            if (!info.FullName.EndsWith(".meta") && !IsExistInABName(info.Name, allbundles) && !info.FullName.EndsWith(".manifest"))
             {
+                //不删除manifest文件，因为unity有个叫增量打包的概念，待查
                 if (File.Exists(info.FullName))
                 {
                     File.Delete(info.FullName);
@@ -222,6 +230,5 @@ public class AssetBundleEditor : Editor {
             }
         }
         return false;
-    }
-
+    } 
 }

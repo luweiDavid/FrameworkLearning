@@ -17,9 +17,6 @@ public class UIConfig:Singleton<UIConfig> {
         },
 
     };
-
-
-	 
 }
 
 //可以通过json来保存面板和对应的数据的字典，比如 [UIPanelName.MainPanel] = { Name = "", Path = "", Layer = UILayer.None }

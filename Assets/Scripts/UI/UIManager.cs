@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager> {
 
@@ -46,15 +46,10 @@ public class UIManager : Singleton<UIManager> {
 
 
                         if (panelConfig.Layer == UILayer.None || panelConfig.Layer == UILayer.NormalLayer)
-                        {
-                            Debug.Log(view.m_trans.anchoredPosition + "  -before-  " + view.m_trans.sizeDelta
-                                +" --- "+ view.m_trans.offsetMax + " --- " + view.m_trans.offsetMin + " --- " + view.m_trans.rect); 
-
-                            view.m_trans.SetParent(m_normalLayerTr);
-
-                            Debug.Log(view.m_trans.anchoredPosition + "  -after-  " + view.m_trans.sizeDelta
-                                + " --- " + view.m_trans.offsetMax + " --- " + view.m_trans.offsetMin + " --- " + view.m_trans.rect); 
-
+                        {  
+                            view.m_trans.SetParent(m_normalLayerTr); 
+                            //Debug.Log(view.m_trans.anchoredPosition + "  -after-  " + view.m_trans.sizeDelta
+                            //    + " --- " + view.m_trans.offsetMax + " --- " + view.m_trans.offsetMin + " --- " + view.m_trans.rect); 
                         }
                         else if(panelConfig.Layer == UILayer.BaseLayer) {
 
@@ -119,4 +114,31 @@ public class UIManager : Singleton<UIManager> {
         return null;
     }
 
+    public void AsyncLoadSprite(string path, Image targetImg, AsyncLoadPriority priority = AsyncLoadPriority.Middile, bool isSetNativeSize = false) {
+        if (targetImg == null) {
+            return;
+        }
+
+        ResourcesManager.Instance.AsyncLoadResource(path, AsyncLoadSpriteFinish, priority,true, targetImg, isSetNativeSize);
+    }
+
+    protected void AsyncLoadSpriteFinish(string path, UnityEngine.Object obj, object param1, object param2, object param3) {
+        if (obj == null) {
+            return;
+        }
+
+        Image targetImg = param1 as Image;
+        bool isSetNativesize = (bool)param2;
+        Sprite newSprite = obj as Sprite;
+        if (targetImg.sprite != null) {
+            targetImg.sprite = null;
+        }
+        if (newSprite) {
+            targetImg.sprite = newSprite;
+
+            if (isSetNativesize)
+            {
+                targetImg.SetNativeSize();
+            }
+        }     }
 }

@@ -29,14 +29,13 @@
   <ABDataBaseList Path="Assets/GameData/Prefabs/Attack.prefab" Crc="1330568117" ABName="attack" AssetName="Attack.prefab">
     <DependenceList>attack</DependenceList>
   </ABDataBaseList>
-  <ABDataBaseList Path="Assets/Scripts/Data/ABDataBase.bytes" Crc="2520334917" ABName="data" AssetName="ABDataBase.bytes" />
-  <ABDataBaseList Path="Assets/GameData/Prefabs/UI/Main/MainPanel.prefab" Crc="4136711088" ABName="mainpanel" AssetName="MainPanel.prefab">
-    <DependenceList>mainpanel</DependenceList>
-  </ABDataBaseList>
-  <ABDataBaseList Path="Assets/GameData/Textures/loading4.jpg" Crc="4036413768" ABName="mainpanel" AssetName="loading4.jpg" />
+  <ABDataBaseList Path="Assets/Scripts/Config/ABDataBase.bytes" Crc="1446976187" ABName="data" AssetName="ABDataBase.bytes" />
+  <ABDataBaseList Path="Assets/Scripts/Config/ConfigManager.cs" Crc="900863635" ABName="data" AssetName="ConfigManager.cs" />
+  <ABDataBaseList Path="Assets/GameData/Prefabs/UI/Main/MainPanel.prefab" Crc="4136711088" ABName="mainpanel" AssetName="MainPanel.prefab" />
   <ABDataBaseList Path="Assets/GameData/Shaders/Skybox.shader" Crc="1986987949" ABName="shader" AssetName="Skybox.shader" />
   <ABDataBaseList Path="Assets/GameData/Shaders/Water.shader" Crc="1357101244" ABName="shader" AssetName="Water.shader" />
   <ABDataBaseList Path="Assets/GameData/Shaders/Xray.shader" Crc="1043595403" ABName="shader" AssetName="Xray.shader" />
   <ABDataBaseList Path="Assets/GameData/Sounds/menusound.mp3" Crc="2729331572" ABName="sound" AssetName="menusound.mp3" />
   <ABDataBaseList Path="Assets/GameData/Sounds/senlin.mp3" Crc="3022988390" ABName="sound" AssetName="senlin.mp3" />
+  <ABDataBaseList Path="Assets/GameData/Textures/loading4.jpg" Crc="4036413768" ABName="texture" AssetName="loading4.jpg" />
 </AssetBundleData>

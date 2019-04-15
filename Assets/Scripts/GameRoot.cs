@@ -8,8 +8,7 @@ using UnityEngine.UI;
 
 public class GameRoot : MonoBehaviour {   
     public const bool m_UseAssetBundleInEditor = true;
-        
-    private GameObject gameObj;
+         
     private void Awake()
     {
         GameObject.DontDestroyOnLoad(gameObject);
@@ -17,8 +16,7 @@ public class GameRoot : MonoBehaviour {
         ResourcesManager.Instance.Init(this);
 
         ObjectsManager.Instance.Init(transform.Find("RecycleObjectsTr"), transform.Find("SceneTr"));
-
-
+         
         #region
         var uiroot = GameObject.Find("UIRoot").GetComponent<Transform>();
         var uicamera = GameObject.Find("UICamera").GetComponent<Camera>();
@@ -26,10 +24,17 @@ public class GameRoot : MonoBehaviour {
         UIManager.Instance.Init(uiroot, uicamera, entsys);
         #endregion
 
+
+        InitConfig();
+    }
+    public void InitConfig() {
+
     }
 
     public void Start()
     { 
+
+
         UIManager.Instance.OpenWindow<MainPanel>(UIPanelName.MainPanel);
     } 
     
@@ -37,12 +42,7 @@ public class GameRoot : MonoBehaviour {
     private void Update()
     {
         
-    }
-
-    void InstantiateDealFinish(string path, UnityEngine.Object obj, object param1, object param2, object param3) {
-        gameObj = obj as GameObject;
-        Debug.Log("玩也");
-    }
+    } 
 
     private void OnApplicationQuit()
     {

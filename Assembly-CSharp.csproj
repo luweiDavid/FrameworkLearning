@@ -62,22 +62,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameData\Modle\benghuai\AutoRotation.cs" />
-    <Compile Include="Assets\Scripts\Config\ConfigManager.cs" />
+    <Compile Include="Assets\Scripts\Data\ConfigDataBase.cs" />
+    <Compile Include="Assets\Scripts\Data\MonsterData.cs" />
     <Compile Include="Assets\Scripts\GameRoot.cs" />
     <Compile Include="Assets\Scripts\Manager\AssetBundleManager.cs" />
+    <Compile Include="Assets\Scripts\Manager\ConfigManager.cs" />
     <Compile Include="Assets\Scripts\Manager\ObjectsManager.cs" />
     <Compile Include="Assets\Scripts\Manager\ResourcesManager.cs" />
     <Compile Include="Assets\Scripts\Model\AssetBundleDataBase.cs" />
     <Compile Include="Assets\Scripts\Model\ClassObjectPool.cs" />
-    <Compile Include="Assets\Scripts\Model\Crc32.cs" />
     <Compile Include="Assets\Scripts\Model\PathConfig.cs" />
     <Compile Include="Assets\Scripts\OfflineData\EffectOffilineData.cs" />
     <Compile Include="Assets\Scripts\OfflineData\OfflineDataBase.cs" />
     <Compile Include="Assets\Scripts\OfflineData\UIOfflineData.cs" />
-    <Compile Include="Assets\Scripts\Test\SomeTest\CoroutineTest.cs" />
-    <Compile Include="Assets\Scripts\Test\TransferTest\ResourcesTest.cs" />
-    <Compile Include="Assets\Scripts\Test\TransferTest\TestAssets.cs" />
-    <Compile Include="Assets\Scripts\Test\TransferTest\TestSerilize.cs" />
+    <Compile Include="Assets\Scripts\Tools\Crc32.cs" />
+    <Compile Include="Assets\Scripts\Tools\GameDataConvert.cs" />
     <Compile Include="Assets\Scripts\Tools\MonoSingle.cs" />
     <Compile Include="Assets\Scripts\Tools\Singleton.cs" />
     <Compile Include="Assets\Scripts\UI\BaseItem.cs" />
@@ -86,11 +85,12 @@
     <Compile Include="Assets\Scripts\UI\UIConfig.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <None Include="Assets\GameData\Shaders\Water.shader" />
+    <None Include="Assets\GameData\Config\Xml\MonsterData.xml" />
     <None Include="Assets\GameData\Modle\benghuai\benghuai.shader" />
     <None Include="Assets\GameData\Modle\benghuai\cloud.shader" />
+    <None Include="Assets\GameData\Config\abBaseList.xml" />
     <None Include="Assets\GameData\Shaders\Skybox.shader" />
     <None Include="Assets\GameData\Shaders\Xray.shader" />
-    <None Include="Assets\abBaseList.xml" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>G:/Homework/FrameworkLearning/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

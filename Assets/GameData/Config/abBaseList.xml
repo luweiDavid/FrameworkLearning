@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetBundleData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Attack.FBX" Crc="1748301669" ABName="attack" AssetName="Attack.FBX">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Avatar_Kiana_C1_Texture_Face_Color_Common.png" Crc="2388404036" ABName="attack" AssetName="Avatar_Kiana_C1_Texture_Face_Color_Common.png" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Avatar_Kiana_C2_Texture_Body_Color_RGB2048.png" Crc="2182320417" ABName="attack" AssetName="Avatar_Kiana_C2_Texture_Body_Color_RGB2048.png" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Avatar_Kiana_C2_Texture_Hair_Color_Common.png" Crc="2960809432" ABName="attack" AssetName="Avatar_Kiana_C2_Texture_Hair_Color_Common.png" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/benghuai.shader" Crc="1857913793" ABName="attack" AssetName="benghuai.shader" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/ID_362.bmp" Crc="1610114254" ABName="attack" AssetName="ID_362.bmp" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/ID_368.bmp" Crc="2349575378" ABName="attack" AssetName="ID_368.bmp" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/ID_370.bmp" Crc="3603605164" ABName="attack" AssetName="ID_370.bmp" />
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Materials/Avatar_Kiana_C1_Texture_Face_Color_Common.mat" Crc="2180688443" ABName="attack" AssetName="Avatar_Kiana_C1_Texture_Face_Color_Common.mat">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Materials/Avatar_Kiana_C2_Texture_Body_Color_RGB2048.mat" Crc="853779896" ABName="attack" AssetName="Avatar_Kiana_C2_Texture_Body_Color_RGB2048.mat">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Materials/Avatar_Kiana_C2_Texture_Hair_Color_Common.mat" Crc="3218919591" ABName="attack" AssetName="Avatar_Kiana_C2_Texture_Hair_Color_Common.mat">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Materials/No Name.mat" Crc="149919265" ABName="attack" AssetName="No Name.mat">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Materials/Weapon_Pistol_K9_62_2.mat" Crc="3367366523" ABName="attack" AssetName="Weapon_Pistol_K9_62_2.mat">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Modle/benghuai/Weapon_Pistol_K9_62_2.png" Crc="3214154899" ABName="attack" AssetName="Weapon_Pistol_K9_62_2.png" />
+  <ABDataBaseList Path="Assets/GameData/Prefabs/Attack.prefab" Crc="1330568117" ABName="attack" AssetName="Attack.prefab">
+    <DependenceList>attack</DependenceList>
+  </ABDataBaseList>
+  <ABDataBaseList Path="Assets/GameData/Config/abBaseList.xml" Crc="531627082" ABName="data" AssetName="abBaseList.xml" />
+  <ABDataBaseList Path="Assets/GameData/Config/ABDataBase.bytes" Crc="986599656" ABName="data" AssetName="ABDataBase.bytes" />
+  <ABDataBaseList Path="Assets/GameData/Config/Xml/MonsterData.xml" Crc="1867152002" ABName="data" AssetName="MonsterData.xml" />
+  <ABDataBaseList Path="Assets/GameData/Prefabs/UI/Main/MainPanel.prefab" Crc="4136711088" ABName="mainpanel" AssetName="MainPanel.prefab" />
+  <ABDataBaseList Path="Assets/GameData/Shaders/Skybox.shader" Crc="1986987949" ABName="shader" AssetName="Skybox.shader" />
+  <ABDataBaseList Path="Assets/GameData/Shaders/Water.shader" Crc="1357101244" ABName="shader" AssetName="Water.shader" />
+  <ABDataBaseList Path="Assets/GameData/Shaders/Xray.shader" Crc="1043595403" ABName="shader" AssetName="Xray.shader" />
+  <ABDataBaseList Path="Assets/GameData/Sounds/menusound.mp3" Crc="2729331572" ABName="sound" AssetName="menusound.mp3" />
+  <ABDataBaseList Path="Assets/GameData/Sounds/senlin.mp3" Crc="3022988390" ABName="sound" AssetName="senlin.mp3" />
+  <ABDataBaseList Path="Assets/GameData/Textures/loading4.jpg" Crc="4036413768" ABName="texture" AssetName="loading4.jpg" />
+</AssetBundleData>

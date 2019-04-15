@@ -138,7 +138,7 @@ public class AssetBundleEditor : Editor {
                 string dependenceABName = "";
                 if(tempDic.TryGetValue(tempDependenceArray[i], out dependenceABName))
                 {
-                    if (!abBase.DependenceList.Contains(dependenceABName)) {  //一个prefab可能用到多次同一种资源，所以这里应该排除，避免重复添加依赖
+                    if (!abBase.DependenceList.Contains(dependenceABName)) {  //一个prefab可能多次用到同一种资源，所以这里应该排除，避免重复添加依赖
                         abBase.DependenceList.Add(dependenceABName);
                     }
                 }
@@ -147,7 +147,7 @@ public class AssetBundleEditor : Editor {
         }
 
         //xml
-        FileStream xmlfs = new FileStream(Application.dataPath + "/abBaseList.xml", FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+        FileStream xmlfs = new FileStream(PathConfig.ABDataBaseXmlPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         StreamWriter sw = new StreamWriter(xmlfs, System.Text.Encoding.UTF8);
         XmlSerializer xmls = new XmlSerializer(typeof(AssetBundleData));
 

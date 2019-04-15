@@ -138,19 +138,19 @@ public class AppBuildEditor
 
     //------------------------------------- TEST -------------------
 
-    [MenuItem("Test/TestFileCopy")]
-    public static void TestCopy()
-    {
-        string srcPath = Application.dataPath + "/../" + "test1/";
-        string tarPath = Application.dataPath + "/../" + "test2/";
-        if (!Directory.Exists(srcPath))
-        {
-            Debug.Log(string.Format("原文件夹不存在:{0}" + srcPath));
-            return;
-        }
-        CleanDirectory(tarPath);
-        CopyAllFiles(srcPath, tarPath);
-    }
+    //[MenuItem("Tools/Test/TestFileCopy")]
+    //public static void TestCopy()
+    //{
+    //    string srcPath = Application.dataPath + "/../" + "test1/";
+    //    string tarPath = Application.dataPath + "/../" + "test2/";
+    //    if (!Directory.Exists(srcPath))
+    //    {
+    //        Debug.Log(string.Format("原文件夹不存在:{0}" + srcPath));
+    //        return;
+    //    }
+    //    CleanDirectory(tarPath);
+    //    CopyAllFiles(srcPath, tarPath);
+    //}
 
 
 }

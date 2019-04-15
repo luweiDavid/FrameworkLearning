@@ -51,4 +51,8 @@ public class PathConfig : Singleton<PathConfig> {
 
     //数据脚本文件夹路径
     public static string GameDataConfigScriptsPath = "Assets/Scripts/Data/";
+
+
+    public static string OuterDataRegPath = Application.dataPath + "/../" + "OuterConfigData/Reg/";
+    public static string OuterDataExcelPath = Application.dataPath + "/../" + "OuterConfigData/Excel/";
 }

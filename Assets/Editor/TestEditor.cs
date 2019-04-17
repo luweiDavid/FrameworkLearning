@@ -222,9 +222,7 @@ public class TestEditor
             default:
                 return null;
         }
-    }
-
-
+    } 
     private static object CreateClassInstanceByName(string name) {
         object obj = null;
         Type _type = null;

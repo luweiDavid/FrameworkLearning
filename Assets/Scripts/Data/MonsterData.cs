@@ -9,8 +9,12 @@ public class MonsterData : ConfigDataBase
 {
 
     [XmlElement("MonsterDataList")]
-    public List<MonsterDataStructure> m_monstersDataList = new List<MonsterDataStructure>(); 
-     
+    public List<MonsterDataStructure> m_monstersDataList = new List<MonsterDataStructure>();
+
+    [XmlElement("MonsterDataList2")]
+    public List<MonsterDataStructure> m_monstersDataList2 = new List<MonsterDataStructure>();
+
+
     [XmlIgnore]
     public Dictionary<int, MonsterDataStructure> m_monsterDataDic = new Dictionary<int, MonsterDataStructure>();
      
@@ -45,7 +49,15 @@ public class MonsterData : ConfigDataBase
             data.OutLook = "Assets/GameData/Prefabs/Attack.prefab";
             data.Rare = i + 1;
             data.Level = i + 1;
+            data.Height = Random.Range(1.7f, 5.2f);
+            data.Type = MonsterType.JiangShi;
+            data.StrList = new List<string>();
+            data.StrList.Add("一级");
+            data.StrList.Add("二级");
+            data.StrList.Add("三级");
+            data.StrList.Add("四级");
             m_monstersDataList.Add(data);
+            m_monstersDataList2.Add(data);
         } 
     } 
 }
@@ -61,5 +73,21 @@ public class MonsterDataStructure {
     [XmlElement("Rare")]
     public int Rare { get; set; }
     [XmlElement("Level")]
-    public int Level { get; set; } 
+    public int Level { get; set; }
+    [XmlElement("Height")]
+    public float Height { get; set; }
+    [XmlElement("Type")]
+    public MonsterType Type { get; set; }
+
+    [XmlElement("StrList")]
+    public List<string> StrList { get; set; }
+
+}
+
+
+public enum MonsterType {
+    None = 0,
+    JiangShi,
+    NvWu,
+
 }

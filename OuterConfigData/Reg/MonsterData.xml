@@ -8,7 +8,22 @@
 			<variable name = "OutLook" col = "预制路径" type = "string"/>
 			<variable name = "Rare" col = "稀有度" type = "int"/>
 			<variable name = "Level" col = "等级" type = "int"/> 
+			<variable name = "Height" col = "高度" type = "float"/> 
+			<variable name = "Type" col = "怪物种类" type = "enum"/> 
+			<variable name = "StrList" col = "等级分布" type = "listStr" split = "；"/> 
 		</list>
 	</variable>
+	<variable name = "m_monstersDataList2" type = "list">
+		<list name = "MonsterDataStructure" sheetname = "怪物配置2" mainKey = "Id">
+			<variable name = "Id" col = "ID" type = "int"/>
+			<variable name = "Name" col = "名字" type = "string"/>
+			<variable name = "OutLook" col = "预制路径" type = "string"/>
+			<variable name = "Rare" col = "稀有度" type = "int"/>
+			<variable name = "Level" col = "等级" type = "int"/> 
+			<variable name = "Height" col = "高度" type = "float"/> 
+			<variable name = "Type" col = "怪物种类" type = "enum"/> 
+			<variable name = "StrList" col = "等级分布" type = "listStr" split = "；"/> 
+		</list>
+	</variable> 
 </data>
 

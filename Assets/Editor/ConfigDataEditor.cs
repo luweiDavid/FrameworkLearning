@@ -10,59 +10,178 @@ using System.Reflection;
 
 public class ConfigDataEditor
 {
-    [MenuItem("Tools/Xml/XmlToExcel")]
-    public static void XmlToExcel() {
-        string xmlPath = PathConfig.OuterDataRegPath + "MonsterData.xml";
+    [MenuItem("Assets/XmlToExcel")]
+    public static void Assets_XmlToExcel() {
+        UnityEngine.Object[] objs = Selection.objects;
+        for (int i = 0; i < objs.Length; i++)
+        {
+            EditorUtility.DisplayProgressBar("Assets下的Xml 转 Excel", "正在扫描" + objs[i].name, 1.0f * i / objs.Length);
+            XmlToExcel(objs[i].name);
+        }
+        EditorUtility.ClearProgressBar();
+        AssetDatabase.Refresh();
+    }
 
+    private static void XmlToExcel(string objName) {
+        string regPath = PathConfig.OuterDataRegPath + objName + ".xml";
+        if (!File.Exists(regPath)){
+            Debug.LogError(regPath+ "  该文件不存在");
+            return;
+        }
+        
         XmlDocument xmlDoc = new XmlDocument();
-        XmlReader reader = XmlReader.Create(xmlPath);
+        XmlReader reader = XmlReader.Create(regPath);
         xmlDoc.Load(reader);
-
-        XmlNode rootNode = xmlDoc.SelectSingleNode(xmlPath);
+         
+        XmlNode rootNode = xmlDoc.SelectSingleNode("data");
         XmlElement rootEle = (XmlElement)rootNode;
         string className = rootEle.GetAttribute("name");
         string excelName = rootEle.GetAttribute("from");
-        string xmlName = rootEle.GetAttribute("to");
-        
-        //key：表名，
-        Dictionary<string, SheetClass> nameSheetDic = new Dictionary<string, SheetClass>();  
-        ReadXmlVariable(rootEle, nameSheetDic,0);
+        string xmlName = rootEle.GetAttribute("to"); 
+        //key：sheetname， 保存所有的sheetclass
+        Dictionary<string, SheetClass> nameSheetClassDic = new Dictionary<string, SheetClass>();
+        ReadRegXmlNode(rootEle, nameSheetClassDic,0); 
          
         Dictionary<string, SheetData> nameSheetDataDic = new Dictionary<string, SheetData>();
 
-        //保存最外层的表
+        //保存最外层的表（也就是data包含的variable）
         List<SheetClass> outerSheetList = new List<SheetClass>();
-        foreach (SheetClass sheet in nameSheetDic.Values)
-        {
+        foreach (SheetClass sheet in nameSheetClassDic.Values)
+        { 
             if (sheet.Depth == 1) {
                 outerSheetList.Add(sheet);
             }
         }
-
         //通过类名，获得脚本实例
-        object classObj = null;
-        Type classType = null;
-        foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+        object classObj = GetClassObjFromXml(className);
+        if (classObj != null)
         {
-            if (asm.GetType(className) != null) {
-                classType = asm.GetType(className);
-                break;
+            foreach (SheetClass sheet in outerSheetList)
+            {
+                ReadData(classObj, sheet, nameSheetClassDic, nameSheetDataDic);
             }
         }
-        if (classType != null) {
+        else {
+            Debug.Log("获取xml的类实例失败！");
+            return;
+        }
+        reader.Close();
 
+        //写入excel
+        string excelPath = PathConfig.OuterDataExcelPath + excelName; 
+        if (IsFileUsed(excelPath))
+        {
+            Debug.LogError("文件被占用");
+            return;
+        }
+        try
+        {
+            FileInfo fileInfo = new FileInfo(excelPath);
+            if (File.Exists(excelPath))
+            {
+                fileInfo.Delete();
+                fileInfo = new FileInfo(excelPath);
+            }
+            foreach (string tName in nameSheetDataDic.Keys)
+            {
+                using (ExcelPackage package = new ExcelPackage(fileInfo))
+                {
+                    ExcelWorksheet workSheet = package.Workbook.Worksheets.Add(tName);
+                     
+                    SheetData tempData = nameSheetDataDic[tName];
+                    for (int i = 0; i < tempData.AllNameList.Count; i++)
+                    {
+                        string colName = tempData.AllNameList[i];
+                        ExcelRange nameRange = workSheet.Cells[1, i + 1]; 
+                        nameRange.Value = colName;
+                        nameRange.AutoFitColumns();
+
+                        string type = tempData.AllTypeList[i];
+                        ExcelRange typeRange = workSheet.Cells[2, i + 1];
+                        typeRange.Value = type;
+                        typeRange.AutoFitColumns();
+                    } 
+                    for (int i = 0; i < tempData.AllRowDataList.Count; i++)
+                    { 
+                        RowData rData = tempData.AllRowDataList[i];
+                        
+                        for (int j = 0; j < rData.OneRowDataDic.Count; j++)
+                        {
+                            string colName = tempData.AllNameList[j];
+                            string theValue = rData.OneRowDataDic[colName];
+                            ExcelRange valueRange = workSheet.Cells[3 + i, j + 1];
+                            valueRange.Value = theValue;
+                            valueRange.AutoFitColumns();
+                        } 
+                    } 
+                    
+                    package.Save();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return;
         }
 
-        reader.Close();
+        Debug.Log("xml 转 excel 成功");
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="xmlEle"></param>
-    /// <param name="nameSheetDic"></param>
-    /// <param name="depth">sheet的深度</param>
-    private static void ReadXmlVariable(XmlElement xmlEle, Dictionary<string, SheetClass> nameSheetDic, int depth)
+    private static void ReadData(object obj,SheetClass sClass, Dictionary<string, SheetClass> nameSheetClassDic,
+        Dictionary<string, SheetData> nameSheetDataDic) {
+
+        List<VariableClass> allVarList = sClass.AllVariableList;
+        VariableClass parentVar = sClass.ParentVarClass;
+
+        //通过反射获取list
+        object dataList = GetMemberValue(obj, parentVar.Name);
+        int listCount = (int)dataList.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, 
+            null, dataList, new object[] { }); 
+         
+        SheetData shtData = new SheetData();
+        for (int i = 0; i < allVarList.Count; i++)
+        {
+            if (!string.IsNullOrEmpty(allVarList[i].Col)) {
+                shtData.AllNameList.Add(allVarList[i].Col);
+                shtData.AllTypeList.Add(allVarList[i].Type);
+            }  
+        }
+        for (int i = 0; i < listCount; i++)
+        {
+            object item = dataList.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod,
+                   null, dataList, new object[] { i });
+
+            RowData rData = new RowData();
+            for (int j = 0; j < allVarList.Count; j++)
+            {
+                if (allVarList[j].Type == "list")
+                {
+                    //如果list中的item包含list，就需要递归读取
+                    SheetClass tempClass = nameSheetClassDic[allVarList[i].ListSheetName];
+                    ReadData(item, tempClass, nameSheetClassDic, nameSheetDataDic);
+                }
+                else if (allVarList[j].Type == "listStr" || allVarList[j].Type == "listInt" ||
+                  allVarList[j].Type == "listFloat" || allVarList[j].Type == "listBool") {
+
+                    //处理基础数据类型的list变量 比如List<string>, 处理方式是用分隔符连接所有的值，然后返回一个字符串
+                    string str = GetBaseListStr(item, allVarList[j]); 
+                    rData.OneRowDataDic.Add(allVarList[j].Col, str);
+                }
+                else
+                {
+                    object tempObj = GetMemberValue(item, allVarList[j].Name);
+                    rData.OneRowDataDic.Add(allVarList[j].Col, tempObj.ToString());
+                }
+            }
+
+            shtData.AllRowDataList.Add(rData); 
+        }
+
+        nameSheetDataDic.Add(sClass.SheetName, shtData);
+    }
+     
+    private static void ReadRegXmlNode(XmlElement xmlEle, Dictionary<string, SheetClass> nameSheetClassDic, int depth)
     {
         depth++;
         foreach (XmlNode node in xmlEle.ChildNodes)
@@ -79,9 +198,12 @@ public class ConfigDataEditor
                     Type = xe.GetAttribute("type"),
                     SplitStr = xe.GetAttribute("split"),
                     Foreign = xe.GetAttribute("foreign"),
-                    DefaultValue = xe.GetAttribute("default"),
+                    DefaultValue = xe.GetAttribute("default"), 
+
+                    ListName = ((XmlElement)xe.FirstChild).GetAttribute("name"),
+                    ListSheetName = ((XmlElement)xe.FirstChild).GetAttribute("sheetname"),
                 };
-                 
+
                 SheetClass _sheetClass = new SheetClass()
                 {
                     ParentVarClass = varClass,
@@ -89,10 +211,11 @@ public class ConfigDataEditor
                     SheetName = subEle.GetAttribute("sheetname"),
                     MainKey = subEle.GetAttribute("mainKey"),
                     SplitStr = subEle.GetAttribute("split"),
+                    Depth = depth,
                 };
 
                 if (!string.IsNullOrEmpty(_sheetClass.SheetName)) {
-                    if (!nameSheetDic.ContainsKey(_sheetClass.SheetName)) {
+                    if (!nameSheetClassDic.ContainsKey(_sheetClass.SheetName)) {
                         foreach (XmlNode inNode in subEle.ChildNodes)
                         {
                             XmlElement inEle = (XmlElement)inNode;
@@ -105,18 +228,112 @@ public class ConfigDataEditor
                                 Foreign = inEle.GetAttribute("foreign"),
                                 DefaultValue = inEle.GetAttribute("default"),
                             };
+                            if (inVarClass.Type == "list") {
+                                inVarClass.ListName = ((XmlElement)inEle.FirstChild).GetAttribute("name");
+                                inVarClass.ListSheetName = ((XmlElement)inEle.FirstChild).GetAttribute("sheetname");
+                            }
+
                             _sheetClass.AllVariableList.Add(inVarClass);
                         }
 
-                        nameSheetDic.Add(_sheetClass.SheetName, _sheetClass);
+                        nameSheetClassDic.Add(_sheetClass.SheetName, _sheetClass);
                     }
                 }
 
-                ReadXmlVariable(subEle, nameSheetDic, depth);
+                ReadRegXmlNode(subEle, nameSheetClassDic, depth);
             }
         }
     }
-     
+
+    private static object GetClassObjFromXml(string className) { 
+        Type classType = null;
+        foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            if (asm.GetType(className) != null)
+            {
+                classType = asm.GetType(className);
+                break;
+            }
+        }
+        if (classType != null)
+        {
+            string xmlPath = PathConfig.GameDataConfigXmlPath + className + ".xml";
+            return GameDataConvert.XmlDeserializeInEditorMode(xmlPath, classType);
+        }
+        return null;
+    }
+
+    private static object GetMemberValue(System.Object obj, string memberName, BindingFlags flags = BindingFlags.Public |
+        BindingFlags.Instance | BindingFlags.Static)
+    {
+
+        Type _type = obj.GetType();
+        MemberInfo[] members = _type.GetMember(memberName, flags);
+
+        switch (members[0].MemberType)
+        {
+            case MemberTypes.Field:
+                return _type.GetField(memberName, flags).GetValue(obj);
+            case MemberTypes.Property:
+                return _type.GetProperty(memberName, flags).GetValue(obj, new object[] { });
+            default:
+                return null;
+        }
+    }
+
+    private static bool IsFileUsed(string fullPath) {
+        bool result = false;
+        if (!File.Exists(fullPath))
+        {
+            result = false;
+        }
+        else {
+            try
+            {
+                using (FileStream fs = File.Open(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) {
+                    result = false;
+                }
+            }
+            catch (Exception)
+            {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    private static string GetBaseListStr(object data,VariableClass varClass) {
+        string str = ""; 
+        if (string.IsNullOrEmpty(varClass.SplitStr)) {
+            Debug.LogError(varClass.Name + " 的分隔符为空，请补充");
+            return str;
+        }
+        object listObj = GetMemberValue(data, varClass.Name);
+        int listCount = (int)listObj.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod,
+            null, listObj, new object[] { });
+
+        for (int i = 0; i < listCount; i++)
+        {
+            object item = listObj.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod,
+            null, listObj, new object[] { i });
+
+            str += item.ToString();
+            if (i != listCount - 1) {
+                str += varClass.SplitStr;
+            }
+        }
+
+        return str;
+    }
+
+
+
+
+
+
+
+
     [MenuItem("Assets/ClassToXml")]
     public static void Assets_ClassToXml()
     {
@@ -213,6 +430,7 @@ public class ConfigDataEditor
 }
 
 public class SheetData {
+    //所有的excel表中的名称
     public List<string> AllNameList = new List<string>();
     public List<string> AllTypeList = new List<string>();
     public List<RowData> AllRowDataList = new List<RowData>();
@@ -220,7 +438,7 @@ public class SheetData {
 
 public class RowData {
     //一行数据，key为Name， Value为对应的具体数值
-    Dictionary<string, string> OneRowDataDic = new Dictionary<string, string>();
+    public Dictionary<string, string> OneRowDataDic = new Dictionary<string, string>();
 }
 
 public class SheetClass {
@@ -253,9 +471,39 @@ public class VariableClass {
     public string Foreign { get; set; }
     //默认值
     public string DefaultValue { get; set; } 
-}
 
+    //以下两个变量是当自身是个list时，还应该保存自身的firstNode的name（也就是List<T>中T的名字）和sheetname，
+    //因为nameSheetClassDic会保存所有的满足sheet结构的数据，这样就可以通过sheetname在nameSheetClassDic中找到对应的SheetClass
+    //具体可以看本脚本最下面的注释
 
+    public string ListName { get; set; } 
+    public string ListSheetName { get; set; }
+} 
+/*
+<?xml version = "1.0" encoding = "utf-8"?>
+
+<data name = "MonsterData" from = "G怪物.xlsx" to = "MonsterData.xml">
+	<variable name = "m_monstersDataList" type = "list">
+		<list name = "MonsterDataStructure" sheetname = "怪物配置" mainKey = "Id">
+			<variable name = "Id" col = "ID" type = "int"/>
+			<variable name = "Name" col = "名字" type = "string"/>
+			<variable name = "OutLook" col = "预制路径" type = "string"/>
+			<variable name = "Rare" col = "稀有度" type = "int"/>
+			<variable name = "m_monstersDataList" type = "list">
+				<list name = "MonsterDataStructure" sheetname = "怪物配置" mainKey = "Id">
+					<variable name = "Id" col = "ID" type = "int"/>
+					<variable name = "Name" col = "名字" type = "string"/>
+					<variable name = "OutLook" col = "预制路径" type = "string"/>
+					<variable name = "Rare" col = "稀有度" type = "int"/>
+					 
+					<variable name = "Level" col = "等级" type = "int"/> 
+				</list>
+			</variable>
+			<variable name = "Level" col = "等级" type = "int"/> 
+		</list>
+	</variable>
+</data>
+*/
 
 
 

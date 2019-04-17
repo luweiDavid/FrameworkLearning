@@ -6,6 +6,12 @@
     <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
     <Rare>1</Rare>
     <Level>1</Level>
+    <Height>4.502148</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
   </MonsterDataList>
   <MonsterDataList>
     <Id>2</Id>
@@ -13,6 +19,12 @@
     <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
     <Rare>2</Rare>
     <Level>2</Level>
+    <Height>2.52717447</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
   </MonsterDataList>
   <MonsterDataList>
     <Id>3</Id>
@@ -20,6 +32,12 @@
     <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
     <Rare>3</Rare>
     <Level>3</Level>
+    <Height>3.41234732</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
   </MonsterDataList>
   <MonsterDataList>
     <Id>4</Id>
@@ -27,6 +45,12 @@
     <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
     <Rare>4</Rare>
     <Level>4</Level>
+    <Height>4.479948</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
   </MonsterDataList>
   <MonsterDataList>
     <Id>5</Id>
@@ -34,5 +58,76 @@
     <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
     <Rare>5</Rare>
     <Level>5</Level>
+    <Height>3.06426072</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
   </MonsterDataList>
+  <MonsterDataList2>
+    <Id>1</Id>
+    <Name>Monster 0</Name>
+    <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
+    <Rare>1</Rare>
+    <Level>1</Level>
+    <Height>4.502148</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
+  </MonsterDataList2>
+  <MonsterDataList2>
+    <Id>2</Id>
+    <Name>Monster 1</Name>
+    <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
+    <Rare>2</Rare>
+    <Level>2</Level>
+    <Height>2.52717447</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
+  </MonsterDataList2>
+  <MonsterDataList2>
+    <Id>3</Id>
+    <Name>Monster 2</Name>
+    <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
+    <Rare>3</Rare>
+    <Level>3</Level>
+    <Height>3.41234732</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
+  </MonsterDataList2>
+  <MonsterDataList2>
+    <Id>4</Id>
+    <Name>Monster 3</Name>
+    <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
+    <Rare>4</Rare>
+    <Level>4</Level>
+    <Height>4.479948</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
+  </MonsterDataList2>
+  <MonsterDataList2>
+    <Id>5</Id>
+    <Name>Monster 4</Name>
+    <OutLook>Assets/GameData/Prefabs/Attack.prefab</OutLook>
+    <Rare>5</Rare>
+    <Level>5</Level>
+    <Height>3.06426072</Height>
+    <Type>JiangShi</Type>
+    <StrList>一级</StrList>
+    <StrList>二级</StrList>
+    <StrList>三级</StrList>
+    <StrList>四级</StrList>
+  </MonsterDataList2>
 </MonsterData>

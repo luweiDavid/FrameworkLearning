@@ -173,3 +173,4 @@ G:\Homework\FrameworkLearning\Temp\bin\Debug\UnityEngine.UnityTestProtocolModule
 G:\Homework\FrameworkLearning\Temp\bin\Debug\UnityEngine.VFXModule.xml
 G:\Homework\FrameworkLearning\Temp\bin\Debug\UnityEngine.TestRunner.xml
 G:\Homework\FrameworkLearning\Temp\bin\Debug\nunit.framework.xml
+G:\Homework\FrameworkLearning\Temp\bin\Debug\EPPlus.dll

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\GameData\Modle\benghuai\AutoRotation.cs" />
     <Compile Include="Assets\Scripts\Data\ConfigDataBase.cs" />
+    <Compile Include="Assets\Scripts\Data\CustomData.cs" />
     <Compile Include="Assets\Scripts\Data\MonsterData.cs" />
     <Compile Include="Assets\Scripts\GameRoot.cs" />
     <Compile Include="Assets\Scripts\Manager\AssetBundleManager.cs" />
@@ -85,8 +86,8 @@
     <Compile Include="Assets\Scripts\UI\Main\MainPanel.cs" />
     <Compile Include="Assets\Scripts\UI\UIConfig.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
+    <None Include="Assets\GameData\Config\Xml\CustomData.xml" />
     <None Include="Assets\GameData\Shaders\Water.shader" />
-    <None Include="Assets\GameData\Config\Xml\MonsterData.xml" />
     <None Include="Assets\GameData\Modle\benghuai\benghuai.shader" />
     <None Include="Assets\GameData\Modle\benghuai\cloud.shader" />
     <None Include="Assets\GameData\Config\abBaseList.xml" />

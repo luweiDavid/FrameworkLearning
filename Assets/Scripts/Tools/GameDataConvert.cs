@@ -13,7 +13,7 @@ public class GameDataConvert
     /// 实例类转xml
     /// </summary>  
     public static bool ClassToXml(System.Object obj) {
-        string savePath = PathConfig.GameDataConfigXmlPath + obj.GetType().Name + ".xml";
+        string savePath = PathConfig.GameDataConfigXmlPath + obj.GetType().Name + ".xml"; 
         try
         { 
             using (FileStream fs = new FileStream(savePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) {

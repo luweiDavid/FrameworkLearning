@@ -189,6 +189,11 @@ public class TestEditor
             };
             pListObj.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod, null,
                 pListObj, new object[] { (object)p });
+        } 
+        PropertyInfo[] pinfos = obj.GetType().GetProperties();
+        foreach (var item in pinfos)
+        {
+            Debug.Log(item.Name);
         }
         obj.GetType().GetProperty("peopleList").SetValue(obj, pListObj, new object[] { });
 
@@ -200,10 +205,10 @@ public class TestEditor
         //    Debug.Log(item);
         //}
 
-        foreach (var item in tc.peopleList)
-        {
-            Debug.Log(item.Age + "    " + item.Name);
-        }
+        //foreach (var item in tc.peopleList)
+        //{
+        //    Debug.Log(item.Age + "    " + item.Name);
+        //}
     }
       
 
@@ -234,7 +239,7 @@ public class TestEditor
                 break;
             }
         }
-
+        Debug.Log(name);
         if (_type != null) {
             obj = Activator.CreateInstance(_type);
         }

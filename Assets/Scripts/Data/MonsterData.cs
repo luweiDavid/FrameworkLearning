@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Xml.Serialization;
 
-[System.Serializable]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[System.Serializable] 
 public class MonsterData : ConfigDataBase
-{
-
+{ 
     [XmlElement("MonsterDataList")]
-    public List<MonsterDataStructure> m_monstersDataList = new List<MonsterDataStructure>();
+    public List<MonsterDataStructure> m_monstersDataList { get; set; }
 
     [XmlElement("MonsterDataList2")]
-    public List<MonsterDataStructure> m_monstersDataList2 = new List<MonsterDataStructure>();
-
+    public List<MonsterDataStructure> m_monstersDataList2 { get; set; }
 
     [XmlIgnore]
     public Dictionary<int, MonsterDataStructure> m_monsterDataDic = new Dictionary<int, MonsterDataStructure>();
@@ -40,7 +37,9 @@ public class MonsterData : ConfigDataBase
     }
 
     public override void Construct()
-    {  
+    {
+        m_monstersDataList = new List<MonsterDataStructure>();
+        m_monstersDataList2 = new List<MonsterDataStructure>();
         for (int i = 0; i < 5; i++)
         {
             MonsterDataStructure data = new MonsterDataStructure();
@@ -61,8 +60,7 @@ public class MonsterData : ConfigDataBase
         } 
     } 
 }
-[System.Serializable]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[System.Serializable] 
 public class MonsterDataStructure {
     [XmlElement("Id")]
     public int Id { get; set; }
@@ -80,8 +78,7 @@ public class MonsterDataStructure {
     public MonsterType Type { get; set; }
 
     [XmlElement("StrList")]
-    public List<string> StrList { get; set; }
-
+    public List<string> StrList { get; set; } 
 }
 
 

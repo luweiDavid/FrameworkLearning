@@ -6,7 +6,7 @@
 			<variable name = "Id" col = "ID" type = "int"/>
 			<variable name = "Name" col = "名字" type = "string"/>
 			<variable name = "OutLook" col = "预制路径" type = "string"/>
-			<variable name = "Rare" col = "稀有度" type = "int"/>
+			<variable name = "Rare" col = "稀有度" type = "int" defaultvalue = "0"/>
 			<variable name = "Level" col = "等级" type = "int"/> 
 			<variable name = "Height" col = "高度" type = "float"/> 
 			<variable name = "Type" col = "怪物种类" type = "enum"/> 
@@ -18,7 +18,7 @@
 			<variable name = "Id" col = "ID" type = "int"/>
 			<variable name = "Name" col = "名字" type = "string"/>
 			<variable name = "OutLook" col = "预制路径" type = "string"/>
-			<variable name = "Rare" col = "稀有度" type = "int"/>
+			<variable name = "Rare" col = "稀有度" type = "int" defaultvalue = "0"/>
 			<variable name = "Level" col = "等级" type = "int"/> 
 			<variable name = "Height" col = "高度" type = "float"/> 
 			<variable name = "Type" col = "怪物种类" type = "enum"/> 

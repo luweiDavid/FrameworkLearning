@@ -1,0 +1,16 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+
+<data name = "CustomData" from = "自定义配置.xlsx" to = "CustomData.xml">
+	<variable name = "customDataList" type = "list">
+		<list name = "CustomDataStructure" sheetname = "用户配置" mainKey = "Id">
+			<variable name = "Id" col = "ID" type = "int"/>
+			<variable name = "Name" col = "名字" type = "string"/>
+			<variable name = "TestCustomList" type = "list">
+				<list name = "TestCustomData" sheetname = "id对应子表" foreign = "Id">
+					<variable name = "Id" col = "ID" type = "int"/>
+					<variable name = "Name" col = "名字" type = "string"/>
+				</list>
+			</variable>
+		</list>
+	</variable>
+</data>

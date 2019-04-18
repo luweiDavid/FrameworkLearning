@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CustomData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <customDataList>
+    <Id>10000</Id>
+    <Name>CustomDataStructure0</Name>
+    <TestCustomList>
+      <Id>2333</Id>
+      <Name>TestCustomList0</Name>
+    </TestCustomList>
+  </customDataList>
+</CustomData>

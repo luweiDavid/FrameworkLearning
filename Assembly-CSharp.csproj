@@ -89,6 +89,7 @@
     <None Include="Assets\GameData\Config\Xml\CustomData.xml" />
     <None Include="Assets\GameData\Shaders\Water.shader" />
     <None Include="Assets\GameData\Modle\benghuai\benghuai.shader" />
+    <None Include="Assets\GameData\Config\Xml\CustomDataStructure.xml" />
     <None Include="Assets\GameData\Modle\benghuai\cloud.shader" />
     <None Include="Assets\GameData\Config\abBaseList.xml" />
     <None Include="Assets\GameData\Shaders\Skybox.shader" />

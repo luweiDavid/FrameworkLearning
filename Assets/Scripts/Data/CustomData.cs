@@ -36,7 +36,7 @@ public class CustomData : ConfigDataBase
     public override void Construct()
     {
         customDataList = new List<CustomDataStructure>();
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 5; i++)
         {
             CustomDataStructure cusData = new CustomDataStructure()
             {
@@ -46,7 +46,7 @@ public class CustomData : ConfigDataBase
             customDataList.Add(cusData);
 
             cusData.TestCustomList = new List<TestCustomData>();
-            for (int j = 0; j < 1; j++)
+            for (int j = 0; j < 3; j++)
             {
                 TestCustomData test = new TestCustomData()
                 {

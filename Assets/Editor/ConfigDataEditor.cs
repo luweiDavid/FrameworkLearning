@@ -57,12 +57,12 @@ public class ConfigDataEditor
             }
         }
         //通过类名，获得脚本实例
-        object classObj = GetClassObjFromXml(className);
+        object classObj = GetClassObjFromXml(className); 
         if (classObj != null)
         {
             foreach (SheetClass sheet in outerSheetList)
             {
-                ReadData(classObj, sheet, nameSheetClassDic, nameSheetDataDic);
+                ReadData(classObj, sheet, nameSheetClassDic, nameSheetDataDic, "");
             }
         }
         else {
@@ -97,28 +97,25 @@ public class ConfigDataEditor
                     {
                         string colName = tempData.AllNameList[i];
                         ExcelRange nameRange = workSheet.Cells[1, i + 1]; 
-                        nameRange.Value = colName;
-                        nameRange.AutoFitColumns();
+                        nameRange.Value = colName; 
 
                         string type = tempData.AllTypeList[i];
                         ExcelRange typeRange = workSheet.Cells[2, i + 1];
-                        typeRange.Value = type;
-                        typeRange.AutoFitColumns();
+                        typeRange.Value = type; 
                     } 
                     for (int i = 0; i < tempData.AllRowDataList.Count; i++)
                     { 
-                        RowData rData = tempData.AllRowDataList[i];
-                        
+                        RowData rData = tempData.AllRowDataList[i];  
                         for (int j = 0; j < rData.OneRowDataDic.Count; j++)
                         {
                             string colName = tempData.AllNameList[j];
                             string theValue = rData.OneRowDataDic[colName];
                             ExcelRange valueRange = workSheet.Cells[3 + i, j + 1];
-                            valueRange.Value = theValue;
-                            valueRange.AutoFitColumns();
+                            valueRange.Value = theValue; 
                         } 
                     } 
-                    
+                    workSheet.Cells.AutoFitColumns();
+                    workSheet.Cells.Style.WrapText = true; 
                     package.Save();
                 }
             }
@@ -132,53 +129,120 @@ public class ConfigDataEditor
         Debug.Log("xml 转 excel 成功");
     }
 
+
+    /// <summary>
+    /// 读取一张sheet的数据保存起来
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="sClass"></param>
+    /// <param name="nameSheetClassDic"></param>
+    /// <param name="nameSheetDataDic"></param>
     private static void ReadData(object obj, SheetClass sClass, Dictionary<string, SheetClass> nameSheetClassDic,
-        Dictionary<string, SheetData> nameSheetDataDic) {
+        Dictionary<string, SheetData> nameSheetDataDic, string theMainKey) {
 
         List<VariableClass> allVarList = sClass.AllVariableList;
         VariableClass parentVar = sClass.ParentVarClass;
 
-        string mainKey = sClass.MainKey; 
-
         //通过反射获取list
         object dataList = GetMemberValue(obj, parentVar.Name);
         int listCount = (int)dataList.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, 
-            null, dataList, new object[] { }); 
-         
+            null, dataList, new object[] { });
+
         SheetData shtData = new SheetData();
+        string tmpMainKey = theMainKey;
+        //在循环之前就要判断当前sheetclass是否是外联表, 
+        if (!string.IsNullOrEmpty(parentVar.Foreign))
+        {
+            //如果是外联表，就需要在这张新的页签添加多一列（在第一列添加）
+            //值对应的是parentVar的上一级list的mainKey对应的值
+            shtData.AllNameList.Add(parentVar.Foreign);
+
+            //TODO，这里添加的类型应该是mainKey对应的类型
+            shtData.AllTypeList.Add(parentVar.Type);
+        }
+       
         for (int i = 0; i < allVarList.Count; i++)
         {
             if (!string.IsNullOrEmpty(allVarList[i].Col)) {
                 shtData.AllNameList.Add(allVarList[i].Col);
                 shtData.AllTypeList.Add(allVarList[i].Type);
-            }  
-        }
+            }
+        }  
+
         for (int i = 0; i < listCount; i++)
         {
             object item = dataList.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod,
                    null, dataList, new object[] { i });
 
+           
             RowData rData = new RowData();
+            if (!string.IsNullOrEmpty(tmpMainKey))
+            {
+                rData.OneRowDataDic.Add(parentVar.Foreign, tmpMainKey);
+            }
+            else
+            {
+                theMainKey = GetMemberValue(item, sClass.MainKey).ToString();
+            }
+
             for (int j = 0; j < allVarList.Count; j++)
             {
-                VariableClass varClass = allVarList[j];
-                if (allVarList[j].Type == "list")
+                VariableClass varClass = allVarList[j]; 
+                if (varClass.Type == "list")
                 {
-                    //如果list中的item包含list，就需要递归读取,这里需要引入一个外键，才能正确添加到nameSheetDataDic 
-                    SheetClass tempClass = nameSheetClassDic[varClass.ListSheetName];
+                    //这种情况处理自定义类的List，（有两种方式处理：1。用分隔符， 2.用主外键的方式，为附加的sheet添加多一列（放在第一列）） 
+                    //根据有没有外键值来决定用那种方式处理自定义类的list  
+                    if (string.IsNullOrEmpty(varClass.SplitStr)) { 
+                        SheetClass _shtC = nameSheetClassDic[varClass.ListSheetName];
+                        ReadData(item, _shtC, nameSheetClassDic, nameSheetDataDic, theMainKey);
 
-                    if (!string.IsNullOrEmpty(varClass.Foreign)) {
-                        //是否存在外键
-
+                        /*
+                        <data name = "CustomData" from = "自定义配置.xlsx" to = "CustomData.xml">
+                        <variable name = "customDataList" type = "list">
+                            <list name = "CustomDataStructure" sheetname = "用户配置" mainKey = "Id">
+	                            <variable name = "Id" col = "ID" type = "int"/>
+	                            <variable name = "Name" col = "名字" type = "string"/>
+	                            <variable name = "TestCustomList" type = "list" foreign = "ID">
+		                            <list name = "TestCustomData" sheetname = "id对应子表">
+			                            <variable name = "Id" col = "SubID" type = "int"/>
+			                            <variable name = "Name" col = "名字" type = "string"/>
+		                            </list>
+	                            </variable>
+                            </list>
+                        </variable>
+                        </data>     
+                        */
                     }
+                    else {
+                        #region 1。用分隔符  对应的结构 以及处理方式
+                        SheetClass _shtC = nameSheetClassDic[varClass.ListSheetName];
+                        string str = GetCustomListStr(item, _shtC);
+                        rData.OneRowDataDic.Add(varClass.Col, str);
 
-                    ReadData(item, tempClass, nameSheetClassDic, nameSheetDataDic);
+                        /*
+                         <data name = "CustomData" from = "自定义配置.xlsx" to = "CustomData.xml">
+                            <variable name = "customDataList" type = "list">
+                                    <list name = "CustomDataStructure" sheetname = "用户配置" mainKey = "Id">
+                                        <variable name = "Id" col = "ID" type = "int"/>
+                                        <variable name = "Name" col = "名字" type = "string"/>
+                                        <variable name = "TestCustomList" col = "TestCustomList" type = "list" split = "|">
+                                            <list name = "TestCustomData" sheetname = "id对应子表">
+                                                <variable name = "Id" col = "ID" type = "int"/>
+                                                <variable name = "Name" col = "名字" type = "string"/>
+                                            </list>
+                                        </variable>
+                                    </list>
+                            </variable>
+                        </data>
+                         */
+                        #endregion
+                    }
                 }
                 else if (varClass.Type == "listStr" || varClass.Type == "listInt" ||
-                  varClass.Type == "listFloat" || varClass.Type == "listBool") {
-
+                  varClass.Type == "listFloat" || varClass.Type == "listBool")
+                { 
                     //处理基础数据类型的list变量 比如List<string>, 处理方式是用分隔符连接所有的值，然后返回一个字符串
-                    string str = GetBaseListStr(item, varClass); 
+                    string str = GetBaseListStr(item, varClass);
                     rData.OneRowDataDic.Add(varClass.Col, str);
                 }
                 else
@@ -187,10 +251,17 @@ public class ConfigDataEditor
                     rData.OneRowDataDic.Add(varClass.Col, tempObj.ToString());
                 }
             }
-
-            shtData.AllRowDataList.Add(rData); 
-        }
-        nameSheetDataDic.Add(sClass.SheetName, shtData);
+            
+            string sheetKey = sClass.SheetName;
+            if (nameSheetDataDic.ContainsKey(sheetKey))
+            {
+                nameSheetDataDic[sheetKey].AllRowDataList.Add(rData);
+            }
+            else {
+                shtData.AllRowDataList.Add(rData);
+                nameSheetDataDic.Add(sheetKey, shtData); 
+            } 
+        } 
     }
      
     /// <summary>
@@ -242,7 +313,7 @@ public class ConfigDataEditor
                                 SplitStr = inEle.GetAttribute("split"),
                                 Foreign = inEle.GetAttribute("foreign"),
                                 DefaultValue = inEle.GetAttribute("defaultvalue"),
-                            };
+                            }; 
                             if (inVarClass.Type == "list") {
                                 inVarClass.ListName = ((XmlElement)inEle.FirstChild).GetAttribute("name");
                                 inVarClass.ListSheetName = ((XmlElement)inEle.FirstChild).GetAttribute("sheetname");
@@ -258,6 +329,70 @@ public class ConfigDataEditor
                 ReadRegXmlNode(subEle, nameSheetClassDic, depth);
             }
         }
+    } 
+
+    /// <summary>
+    /// 获得自定义类的list的字符串,通过分隔符连接, 比如List<TestCustom>
+    /// </summary>
+    private static string GetCustomListStr(object obj, SheetClass shtClass) { 
+        object listObj = GetMemberValue(obj, shtClass.ParentVarClass.Name);
+
+        int listCount = (int)listObj.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null,
+            listObj, new object[] { });
+         
+        string str = "";
+        for (int i = 0; i < listCount; i++)
+        {
+            object item = listObj.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod,
+                null, listObj, new object[] { i });
+
+            for (int j = 0; j < shtClass.AllVariableList.Count; j++)
+            {
+                object value = GetMemberValue(item, shtClass.AllVariableList[j].Name);
+                str += value.ToString();
+                if (j != shtClass.AllVariableList.Count - 1) {
+                    str += shtClass.ParentVarClass.SplitStr;
+                }
+            }
+            if (i != listCount - 1)
+            {
+                str += "\n";
+            }
+        }
+        return str;
+    }
+
+    /// <summary>
+    /// 基础数据List的所有值的拼接  ，比如List<string>
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="varClass"></param>
+    /// <returns></returns>
+    private static string GetBaseListStr(object data, VariableClass varClass)
+    {
+        string str = "";
+        if (string.IsNullOrEmpty(varClass.SplitStr))
+        {
+            Debug.LogError(varClass.Name + " 的分隔符为空，请补充");
+            return str;
+        }
+        object listObj = GetMemberValue(data, varClass.Name);
+        int listCount = (int)listObj.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod,
+            null, listObj, new object[] { });
+
+        for (int i = 0; i < listCount; i++)
+        {
+            object item = listObj.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod,
+            null, listObj, new object[] { i });
+
+            str += item.ToString();
+            if (i != listCount - 1)
+            {
+                str += varClass.SplitStr;
+            }
+        }
+
+        return str;
     }
 
 
@@ -354,39 +489,13 @@ public class ConfigDataEditor
 
         return result;
     }
-
+     
 
     /// <summary>
-    /// 基础数据List的所有值的拼接
+    /// 通过T的类型，创建list
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="varClass"></param>
+    /// <param name="type"></param>
     /// <returns></returns>
-    private static string GetBaseListStr(object data,VariableClass varClass) {
-        string str = ""; 
-        if (string.IsNullOrEmpty(varClass.SplitStr)) {
-            Debug.LogError(varClass.Name + " 的分隔符为空，请补充");
-            return str;
-        }
-        object listObj = GetMemberValue(data, varClass.Name);
-        int listCount = (int)listObj.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod,
-            null, listObj, new object[] { });
-
-        for (int i = 0; i < listCount; i++)
-        {
-            object item = listObj.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod,
-            null, listObj, new object[] { i });
-
-            str += item.ToString();
-            if (i != listCount - 1) {
-                str += varClass.SplitStr;
-            }
-        }
-
-        return str;
-    }
-
-
     private static object CreateListByType(Type type) {
         Type listType = typeof(List<>);
         Type pType = listType.MakeGenericType(new Type[] { type });
@@ -399,7 +508,7 @@ public class ConfigDataEditor
     //-------------------------------------------------------------------------------------------------------------------
     [MenuItem("Tools/Xml/ExcelToXml")]
     public static void ExcelToXml() {
-        string regPath = PathConfig.OuterDataRegPath + "MonsterData.xml";
+        string regPath = PathConfig.OuterDataRegPath + "CustomData.xml";
         if (!File.Exists(regPath)) {
             Debug.LogError("reg文件不存在" + regPath);
             return;
@@ -418,7 +527,7 @@ public class ConfigDataEditor
         Dictionary<string, SheetClass> nameSheetClassDic = new Dictionary<string, SheetClass>();
         ReadRegXmlNode(rootEle, nameSheetClassDic, 0);
 
-        Dictionary<string, SheetData> nameSheetDataDic = new Dictionary<string, SheetData>();
+        Dictionary<string, SheetData> _nameSheetDataDic = new Dictionary<string, SheetData>();
         string excelPath = PathConfig.OuterDataExcelPath + excelName;
          
 
@@ -439,16 +548,24 @@ public class ConfigDataEditor
                     {
                         //保存变量名和类型
                         _shtData.AllNameList.Add(_shtClass.AllVariableList[m].Name);
-                        _shtData.AllTypeList.Add(_shtClass.AllVariableList[m].Type);
+                        _shtData.AllTypeList.Add(_shtClass.AllVariableList[m].Type); 
                     }
 
                     //保存每一行的数据，从第三行开始是实际的数据
                     for (int m = 3; m <= rowCount; m++)
                     {
                         RowData _rowData = new RowData();
-                        for (int n = 1; n <= colCount; n++)
-                        {
-                            string key = workSheet.Cells[1, n].Value.ToString(); 
+
+                        int n = 1;
+                        if (_shtClass.ParentVarClass != null && !string.IsNullOrEmpty(_shtClass.ParentVarClass.Foreign)){
+                            //如果是子表就从第二列开始读取数据 
+                            _shtData.IsSubSheet = true;
+                            _rowData.ForeignKey = workSheet.Cells[m, 1].Value.ToString().Trim(); 
+                            n = 2;
+                        }
+                        for (; n <= colCount; n++)
+                        { 
+                            string key = workSheet.Cells[1, n].Value.ToString().Trim();
                             string value = "";
                             if (workSheet.Cells[m, n].Value != null) {
                                 value = workSheet.Cells[m, n].Value.ToString().Trim();
@@ -457,7 +574,8 @@ public class ConfigDataEditor
                         }
                         _shtData.AllRowDataList.Add(_rowData); 
                     }
-                    nameSheetDataDic.Add(workSheet.Name, _shtData);
+
+                    _nameSheetDataDic.Add(workSheet.Name, _shtData);
                 }
             }
         }
@@ -479,29 +597,67 @@ public class ConfigDataEditor
 
             foreach (string str in outerKeyList)
             {
-                WriteToClass(classObj, str, nameSheetClassDic, nameSheetDataDic);
+                WriteToClass(classObj, str, nameSheetClassDic, _nameSheetDataDic, "");
             }
         }
     }
 
     private static void WriteToClass(object classObj,string shtName, Dictionary<string, SheetClass> nameSheetClassDic,
-        Dictionary<string, SheetData> nameSheetDataDic) { 
+        Dictionary<string, SheetData> nameSheetDataDic, string mainKeyValue) { 
         SheetClass shtClass = nameSheetClassDic[shtName];
         SheetData shtData = nameSheetDataDic[shtName]; 
 
         //根据T类型， 创建list
         object tempObj = CreateClassObjByName(shtClass.Name);
         object listObj = CreateListByType(tempObj.GetType());
+         
         for (int i = 0; i < shtData.AllRowDataList.Count; i++)
-        { 
-            object tObj = CreateClassObjByName(shtClass.Name);
+        {
+            Debug.Log(shtData.AllRowDataList[i].ForeignKey + "  --"+i);
+            object tObj = CreateClassObjByName(shtClass.Name); 
             for (int j = 0; j < shtClass.AllVariableList.Count; j++)
             {
-                VariableClass varClass = shtClass.AllVariableList[j];
-                if (varClass.Type == "list")
-                {
-                    //如果list中的变量也是list， 那么就要去变量（varClass）中的ListSheetName（表格名），然后递归写入
-                    WriteToClass(tObj, varClass.ListSheetName, nameSheetClassDic, nameSheetDataDic);
+                VariableClass varClass = shtClass.AllVariableList[j]; 
+                if (varClass.Type.Trim() == "list")
+                { 
+                    if (string.IsNullOrEmpty(varClass.SplitStr))
+                    { 
+                        if (!string.IsNullOrEmpty(shtData.AllRowDataList[i].ForeignKey)) {
+                            if (shtData.AllRowDataList[i].ForeignKey != mainKeyValue) {
+                                continue;
+                            }
+                        }
+                        string tmpMainKey = GetMemberValue(tObj, shtClass.MainKey).ToString();
+                        WriteToClass(tObj, varClass.ListSheetName, nameSheetClassDic, nameSheetDataDic, tmpMainKey);
+                    }
+                    else {
+                        SheetClass tmpShtClass = nameSheetClassDic[varClass.ListSheetName];
+                        object customClassObj = CreateClassObjByName(tmpShtClass.Name);
+                        object customListObj = CreateListByType(customClassObj.GetType()); 
+
+                        string tmpStr = shtData.AllRowDataList[i].OneRowDataDic[varClass.Col];
+                        if (string.IsNullOrEmpty(tmpStr))
+                        {
+                            Debug.LogError("excel中没有值，对应列名： " + varClass.Col);
+                            return;
+                        }
+                        string[] tmpStrArray = tmpStr.Split('\n'); 
+                        
+                        for (int tmpI = 0; tmpI < tmpStrArray.Length; tmpI++)
+                        {
+                            string oneStr = tmpStrArray[tmpI]; 
+                            string[] oneStrArray = oneStr.Split(new string[] { varClass.SplitStr.Trim() }, StringSplitOptions.None);
+                            object oneCusClassObj = CreateClassObjByName(tmpShtClass.Name);
+                            for (int oneI = 0; oneI < oneStrArray.Length; oneI++)
+                            {
+                                PropertyInfo tmpInfo = oneCusClassObj.GetType().GetProperty(tmpShtClass.AllVariableList[oneI].Name);
+                                SetValueByType(tmpInfo, oneCusClassObj, oneStrArray[oneI], tmpShtClass.AllVariableList[oneI].Type);
+                            }
+                            customListObj.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod,
+                                null, customListObj, new object[] { oneCusClassObj });
+                        }
+                        tObj.GetType().GetProperty(varClass.Name).SetValue(tObj, customListObj, new object[] { });
+                    }
                 }
                 else if (varClass.Type == "listStr" || varClass.Type == "listInt" ||
                   varClass.Type == "listFloat" || varClass.Type == "listBool") {
@@ -514,6 +670,11 @@ public class ConfigDataEditor
                     object inlistObj = CreateListByType(_tmpType);
                     string invalue = shtData.AllRowDataList[i].OneRowDataDic[varClass.Col];
 
+                    if (string.IsNullOrEmpty(invalue)) {
+                        Debug.LogError("excel中没有值，对应列名： "+varClass.Col);
+                        return;
+                    }
+
                     string[] strArray = invalue.Split(System.Convert.ToChar(varClass.SplitStr));
                     for (int strcount = 0; strcount < strArray.Length; strcount++)
                     {
@@ -521,7 +682,7 @@ public class ConfigDataEditor
                         if (!string.IsNullOrEmpty(inlistValue))
                         {
                             inlistObj.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod,
-                                null, inlistObj, new object[] { });
+                                null, inlistObj, new object[] { inlistValue });
                         }
                         else {
                             Debug.Log("基础数据类型的List的值为null");
@@ -531,8 +692,7 @@ public class ConfigDataEditor
                     tObj.GetType().GetProperty(varClass.Name).SetValue(tObj, inlistObj, new object[] { });
                 }
                 else
-                {
-                    //根据变量名，从类实例中反射出来PropertyInfo
+                { 
                     PropertyInfo pInfo = tObj.GetType().GetProperty(varClass.Name);
                     string value = shtData.AllRowDataList[i].OneRowDataDic[varClass.Col];
                     if (string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(varClass.DefaultValue))
@@ -544,12 +704,11 @@ public class ConfigDataEditor
                         return;
                     }
 
-                    SetValueByType(pInfo, tObj, value, shtData.AllTypeList[j]);
-
-                    listObj.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod,
-                        null, listObj, new object[] { tObj });
+                    SetValueByType(pInfo, tObj, value, shtData.AllTypeList[j]); 
                 }
             }
+            listObj.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod,
+                       null, listObj, new object[] { tObj });
         }  
         classObj.GetType().GetProperty(shtClass.ParentVarClass.Name).SetValue(classObj, listObj, new object[] { });
          
@@ -609,10 +768,7 @@ public class ConfigDataEditor
     }
 
 
-
-
-
-
+     
 
 
 
@@ -711,6 +867,8 @@ public class ConfigDataEditor
 }
 
 public class SheetData {
+    //是否是子表
+    public bool IsSubSheet = false;
     //所有的excel表中的名称
     public List<string> AllNameList = new List<string>();
     public List<string> AllTypeList = new List<string>();
@@ -718,6 +876,8 @@ public class SheetData {
 }
 
 public class RowData {
+    //如果是子表，那么就保存每一行对应的外键的具体值
+    public string ForeignKey = "";
     //一行数据，key为Name， Value为对应的具体数值
     public Dictionary<string, string> OneRowDataDic = new Dictionary<string, string>();
 }

@@ -12,6 +12,7 @@ public class AppBuildEditor
     [MenuItem("Tools/BuildApp")]
     public static void BuildApp() {
         AssetBundleEditor.Build();
+        ConfigDataEditor.AllXmlToBinary();
 
         CopyABToStreamAssetsPath();
         CleanBuildTargetSubDirectory();
@@ -19,6 +20,8 @@ public class AppBuildEditor
         string buildPath = GetBuildPath(); 
 
         BuildPipeline.BuildPlayer(GetEditorScenesPathArray(), buildPath, EditorUserBuildSettings.activeBuildTarget,BuildOptions.None);
+
+        Debug.Log("打包完成");
     }
 
     private static string[] GetEditorScenesPathArray() {
@@ -30,8 +33,12 @@ public class AppBuildEditor
             sceneList.Add(scene.path);
         }
         return sceneList.ToArray();
-    }
+    } 
 
+    /// <summary>
+    /// 根据不同平台获取打包路径
+    /// </summary>
+    /// <returns></returns>
     private static string GetBuildPath() {
         string buildPath = "";
         string tmpPath = Application.dataPath + "/../" + "BuildTarget/";
@@ -53,13 +60,22 @@ public class AppBuildEditor
         return buildPath;
     }
 
-    private static void CopyABToStreamAssetsPath() {
+    /// <summary>
+    /// 拷贝不同平台的ab包到StreamAssets文件夹下
+    /// </summary>
+    public static void CopyABToStreamAssetsPath() {
         string tarPath = Application.streamingAssetsPath;
         string srcPath = PathConfig.Instance.GetABTargetPath(); 
         CleanDirectory(tarPath);
         CopyAllFiles(srcPath, tarPath); 
     }
 
+
+    /// <summary>
+    /// 拷贝所有的文件
+    /// </summary>
+    /// <param name="srcPath"></param>
+    /// <param name="targetPath"></param>
     private static void CopyAllFiles(string srcPath, string targetPath) {
         try
         {
@@ -99,6 +115,11 @@ public class AppBuildEditor
         }
     }
 
+
+    /// <summary>
+    /// 清空文件夹
+    /// </summary>
+    /// <param name="targetPath"></param>
     private static void CleanDirectory(string targetPath) {
         if (string.IsNullOrEmpty(targetPath)) {
             Debug.LogError("目标路径为null");

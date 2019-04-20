@@ -15,72 +15,12 @@
       <Id>2000335</Id>
       <Name>TestCustomList0</Name>
     </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
   </customDataList>
   <customDataList>
     <Id>5051</Id>
     <Name>CustomDataStructure1</Name>
     <TestCustomList>
       <Id>2000333</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
       <Name>TestCustomList1</Name>
     </TestCustomList>
     <TestCustomList>
@@ -90,42 +30,6 @@
     <TestCustomList>
       <Id>2000335</Id>
       <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList4</Name>
     </TestCustomList>
   </customDataList>
   <customDataList>
@@ -133,30 +37,6 @@
     <Name>CustomDataStructure2</Name>
     <TestCustomList>
       <Id>2000333</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
       <Name>TestCustomList2</Name>
     </TestCustomList>
     <TestCustomList>
@@ -166,30 +46,6 @@
     <TestCustomList>
       <Id>2000335</Id>
       <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList4</Name>
     </TestCustomList>
   </customDataList>
   <customDataList>
@@ -197,42 +53,6 @@
     <Name>CustomDataStructure3</Name>
     <TestCustomList>
       <Id>2000333</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
       <Name>TestCustomList3</Name>
     </TestCustomList>
     <TestCustomList>
@@ -242,71 +62,11 @@
     <TestCustomList>
       <Id>2000335</Id>
       <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList4</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList4</Name>
     </TestCustomList>
   </customDataList>
   <customDataList>
     <Id>5054</Id>
     <Name>CustomDataStructure4</Name>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList0</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList1</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList2</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000333</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000334</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
-    <TestCustomList>
-      <Id>2000335</Id>
-      <Name>TestCustomList3</Name>
-    </TestCustomList>
     <TestCustomList>
       <Id>2000333</Id>
       <Name>TestCustomList4</Name>

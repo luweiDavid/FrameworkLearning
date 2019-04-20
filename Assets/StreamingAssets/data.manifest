@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1146467039
+CRC: 4045917263
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3c5848cdc34e70e1a9dfbdc76c4d6c47
+    Hash: ff1b5da7b8514075b150c35d7ee294df
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
@@ -12,5 +12,5 @@ ClassTypes:
 - Class: 49
   Script: {instanceID: 0}
 Assets:
-- Assets/Scripts/Data/ABDataBase.bytes
+- Assets/GameData/Config/ABDataBase.bytes
 Dependencies: []

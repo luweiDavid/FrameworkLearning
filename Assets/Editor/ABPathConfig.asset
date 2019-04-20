@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c6b7e697386d84abad4252b98feaf7, type: 3}
+  m_Name: ABPathConfig
+  m_EditorClassIdentifier: 
+  PrefabRootPath: Assets/GameData/Prefabs
+  m_prefabPathList:
+  - Assets/GameData/Prefabs
+  m_pathABNameList:
+  - ABName: shaders
+    Path: Assets/GameData/Shaders
+  - ABName: sounds
+    Path: Assets/GameData/Sounds
+  - ABName: textures
+    Path: Assets/GameData/Textures
+  - ABName: data
+    Path: Assets/GameData/Config/ABDataBase.bytes

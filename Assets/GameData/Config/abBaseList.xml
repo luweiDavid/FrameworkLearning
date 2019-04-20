@@ -29,14 +29,12 @@
   <ABDataBaseList Path="Assets/GameData/Prefabs/Attack.prefab" Crc="1330568117" ABName="attack" AssetName="Attack.prefab">
     <DependenceList>attack</DependenceList>
   </ABDataBaseList>
-  <ABDataBaseList Path="Assets/GameData/Config/abBaseList.xml" Crc="531627082" ABName="data" AssetName="abBaseList.xml" />
   <ABDataBaseList Path="Assets/GameData/Config/ABDataBase.bytes" Crc="986599656" ABName="data" AssetName="ABDataBase.bytes" />
-  <ABDataBaseList Path="Assets/GameData/Config/Xml/MonsterData.xml" Crc="1867152002" ABName="data" AssetName="MonsterData.xml" />
   <ABDataBaseList Path="Assets/GameData/Prefabs/UI/Main/MainPanel.prefab" Crc="4136711088" ABName="mainpanel" AssetName="MainPanel.prefab" />
-  <ABDataBaseList Path="Assets/GameData/Shaders/Skybox.shader" Crc="1986987949" ABName="shader" AssetName="Skybox.shader" />
-  <ABDataBaseList Path="Assets/GameData/Shaders/Water.shader" Crc="1357101244" ABName="shader" AssetName="Water.shader" />
-  <ABDataBaseList Path="Assets/GameData/Shaders/Xray.shader" Crc="1043595403" ABName="shader" AssetName="Xray.shader" />
-  <ABDataBaseList Path="Assets/GameData/Sounds/menusound.mp3" Crc="2729331572" ABName="sound" AssetName="menusound.mp3" />
-  <ABDataBaseList Path="Assets/GameData/Sounds/senlin.mp3" Crc="3022988390" ABName="sound" AssetName="senlin.mp3" />
-  <ABDataBaseList Path="Assets/GameData/Textures/loading4.jpg" Crc="4036413768" ABName="texture" AssetName="loading4.jpg" />
+  <ABDataBaseList Path="Assets/GameData/Shaders/Skybox.shader" Crc="1986987949" ABName="shaders" AssetName="Skybox.shader" />
+  <ABDataBaseList Path="Assets/GameData/Shaders/Water.shader" Crc="1357101244" ABName="shaders" AssetName="Water.shader" />
+  <ABDataBaseList Path="Assets/GameData/Shaders/Xray.shader" Crc="1043595403" ABName="shaders" AssetName="Xray.shader" />
+  <ABDataBaseList Path="Assets/GameData/Sounds/menusound.mp3" Crc="2729331572" ABName="sounds" AssetName="menusound.mp3" />
+  <ABDataBaseList Path="Assets/GameData/Sounds/senlin.mp3" Crc="3022988390" ABName="sounds" AssetName="senlin.mp3" />
+  <ABDataBaseList Path="Assets/GameData/Textures/loading4.jpg" Crc="4036413768" ABName="textures" AssetName="loading4.jpg" />
 </AssetBundleData>

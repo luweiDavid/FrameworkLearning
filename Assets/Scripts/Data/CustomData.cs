@@ -32,7 +32,7 @@ public class CustomData : ConfigDataBase
 
         return null;
     }
-
+#if UNITY_EDITOR
     public override void Construct()
     {
         customDataList = new List<CustomDataStructure>();
@@ -57,8 +57,10 @@ public class CustomData : ConfigDataBase
             }
         }
     }
+#endif
 }
 
+[System.Serializable]
 public class CustomDataStructure {
     [XmlElement("Id")]
     public int Id { get; set; }
@@ -69,6 +71,7 @@ public class CustomDataStructure {
     public List<TestCustomData> TestCustomList { get; set; }
 }
 
+[System.Serializable]
 public class TestCustomData {
     [XmlElement("Id")]
     public int Id { get; set; }

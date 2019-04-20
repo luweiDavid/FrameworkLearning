@@ -35,7 +35,7 @@ public class MonsterData : ConfigDataBase
         }
         return null;
     }
-
+#if UNITY_EDITOR
     public override void Construct()
     {
         m_monstersDataList = new List<MonsterDataStructure>();
@@ -58,7 +58,8 @@ public class MonsterData : ConfigDataBase
             m_monstersDataList.Add(data);
             m_monstersDataList2.Add(data);
         } 
-    } 
+    }
+#endif
 }
 [System.Serializable] 
 public class MonsterDataStructure {
@@ -81,7 +82,7 @@ public class MonsterDataStructure {
     public List<string> StrList { get; set; } 
 }
 
-
+[System.Serializable]
 public enum MonsterType {
     None = 0,
     JiangShi,

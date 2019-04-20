@@ -11,12 +11,17 @@ using System.ComponentModel;
 
 public class ConfigDataEditor
 {
-    [MenuItem("Assets/XmlToExcel")]
+    [MenuItem("Tools/Xml/AllXmlToExcel")]
     public static void Assets_XmlToExcel() {
         UnityEngine.Object[] objs = Selection.objects;
         for (int i = 0; i < objs.Length; i++)
         {
-            EditorUtility.DisplayProgressBar("Assets下的Xml 转 Excel", "正在扫描" + objs[i].name, 1.0f * i / objs.Length);
+            if (!objs[i].name.EndsWith(".xml"))
+            {
+                continue;
+            }
+            EditorUtility.DisplayProgressBar("Xml 转 Excel", "正在扫描" + objs[i].name, 1.0f * i / objs.Length);
+
             XmlToExcel(objs[i].name);
         }
         EditorUtility.ClearProgressBar();
@@ -128,8 +133,7 @@ public class ConfigDataEditor
 
         Debug.Log("xml 转 excel 成功");
     }
-
-
+     
     /// <summary>
     /// 读取一张sheet的数据保存起来
     /// </summary>
@@ -394,8 +398,7 @@ public class ConfigDataEditor
 
         return str;
     }
-
-
+     
     /// <summary>
     /// 获取类的实例 （这是有数据的）
     /// </summary>
@@ -489,8 +492,7 @@ public class ConfigDataEditor
 
         return result;
     }
-     
-
+      
     /// <summary>
     /// 通过T的类型，创建list
     /// </summary>
@@ -503,12 +505,27 @@ public class ConfigDataEditor
 
         return pListObj;
     }
-
-
+     
     //-------------------------------------------------------------------------------------------------------------------
-    [MenuItem("Tools/Xml/ExcelToXml")]
-    public static void ExcelToXml() {
-        string regPath = PathConfig.OuterDataRegPath + "CustomData.xml";
+    [MenuItem("Tools/Xml/AllExcelToXml")]
+    public static void AllExcelToXml() {
+        string regPath = PathConfig.OuterDataRegPath;
+        string[] fileStrs = Directory.GetFiles(regPath, "*", SearchOption.AllDirectories);
+        for (int i = 0; i < fileStrs.Length; i++)
+        {
+            if (!fileStrs[i].EndsWith(".xml")) {
+                continue;
+            }
+            EditorUtility.DisplayProgressBar("正在搜索所有Reg文件", "正在扫描：" + fileStrs[i], 1.0f * i / fileStrs.Length);
+            string regName = fileStrs[i].Substring(fileStrs[i].LastIndexOf("/") + 1);
+            ExcelToXml(regName);
+        }
+        EditorUtility.ClearProgressBar();
+    }
+     
+    private static void ExcelToXml(string regName) {
+        string regPath = PathConfig.OuterDataRegPath + regName;
+
         if (!File.Exists(regPath)) {
             Debug.LogError("reg文件不存在" + regPath);
             return;
@@ -579,7 +596,7 @@ public class ConfigDataEditor
                 }
             }
         }
-
+        
         //写入到类中
         object classObj = CreateClassObjByName(className);
         if (classObj != null)
@@ -594,11 +611,14 @@ public class ConfigDataEditor
                     outerKeyList.Add(str);
                 }
             }
-
             foreach (string str in outerKeyList)
             {
                 WriteToClass(classObj, str, nameSheetClassDic, _nameSheetDataDic, "");
             }
+
+            //xml序列化 
+            GameDataConvert.ClassToXml(classObj);
+            AssetDatabase.Refresh();
         }
     }
 
@@ -606,14 +626,21 @@ public class ConfigDataEditor
         Dictionary<string, SheetData> nameSheetDataDic, string mainKeyValue) { 
         SheetClass shtClass = nameSheetClassDic[shtName];
         SheetData shtData = nameSheetDataDic[shtName]; 
-
-        //根据T类型， 创建list
+         
         object tempObj = CreateClassObjByName(shtClass.Name);
         object listObj = CreateListByType(tempObj.GetType());
          
         for (int i = 0; i < shtData.AllRowDataList.Count; i++)
         {
-            Debug.Log(shtData.AllRowDataList[i].ForeignKey + "  --"+i);
+            if (!string.IsNullOrEmpty(shtData.AllRowDataList[i].ForeignKey))
+            { 
+                if (shtData.AllRowDataList[i].ForeignKey != mainKeyValue)
+                {
+                    //如果是子表，并且这个子表的ForeignKey不等于主表的mainKey，就continue
+                    //也就是不写进tObj中
+                    continue;
+                }
+            }
             object tObj = CreateClassObjByName(shtClass.Name); 
             for (int j = 0; j < shtClass.AllVariableList.Count; j++)
             {
@@ -621,16 +648,12 @@ public class ConfigDataEditor
                 if (varClass.Type.Trim() == "list")
                 { 
                     if (string.IsNullOrEmpty(varClass.SplitStr))
-                    { 
-                        if (!string.IsNullOrEmpty(shtData.AllRowDataList[i].ForeignKey)) {
-                            if (shtData.AllRowDataList[i].ForeignKey != mainKeyValue) {
-                                continue;
-                            }
-                        }
+                    {  
                         string tmpMainKey = GetMemberValue(tObj, shtClass.MainKey).ToString();
                         WriteToClass(tObj, varClass.ListSheetName, nameSheetClassDic, nameSheetDataDic, tmpMainKey);
                     }
                     else {
+                        //用分隔符保存的excel数据
                         SheetClass tmpShtClass = nameSheetClassDic[varClass.ListSheetName];
                         object customClassObj = CreateClassObjByName(tmpShtClass.Name);
                         object customListObj = CreateListByType(customClassObj.GetType()); 
@@ -710,11 +733,7 @@ public class ConfigDataEditor
             listObj.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod,
                        null, listObj, new object[] { tObj });
         }  
-        classObj.GetType().GetProperty(shtClass.ParentVarClass.Name).SetValue(classObj, listObj, new object[] { });
-         
-        //xml序列化
-        GameDataConvert.ClassToXml(classObj);
-        AssetDatabase.Refresh();
+        classObj.GetType().GetProperty(shtClass.ParentVarClass.Name).SetValue(classObj, listObj, new object[] { }); 
     }
 
     private static void SetValueByType(PropertyInfo pInfo, object obj, string value, string type)
@@ -768,8 +787,49 @@ public class ConfigDataEditor
     }
 
 
-     
 
+    [MenuItem("Tools/Xml/AllXmlToBinary")]
+    public static void AllXmlToBinary()
+    {
+        string path = Application.dataPath.Replace("Assets", "") + PathConfig.GameDataConfigXmlPath;
+        string[] files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+        for (int i = 0; i < files.Length; i++)
+        {
+            EditorUtility.DisplayProgressBar("xml转binary", "正在扫描：" + files[i], 1.0f * i / files.Length);
+            string str1 = files[i].Substring(files[i].LastIndexOf("/") + 1);
+            if (str1.EndsWith(".xml"))
+            {
+                string name = str1.Replace(".xml", "");
+                XmlToBinary(name);
+            }
+        }
+        Debug.Log("all xml to binary succuss");
+        EditorUtility.ClearProgressBar();
+        AssetDatabase.Refresh();
+    }
+    private static void XmlToBinary(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+        Type _type = null;
+        foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type tempType = item.GetType(name);
+            if (tempType != null)
+            {
+                _type = tempType;
+                break;
+            }
+        }
+        if (_type != null)
+        {
+            string xmlPath = PathConfig.GameDataConfigXmlPath + name + ".xml"; 
+            object obj = GameDataConvert.XmlDeserializeInEditorMode(xmlPath, _type);
+            GameDataConvert.BinarySerialize(obj);
+        }
+    } 
 
 
     [MenuItem("Assets/ClassToXml")]
@@ -797,25 +857,7 @@ public class ConfigDataEditor
         EditorUtility.ClearProgressBar();
         AssetDatabase.Refresh();
     }
-
-    [MenuItem("Tools/AllXmlToBinary")]
-    public static void AllXmlToBinary() {
-        string path = Application.dataPath.Replace("Assets", "") + PathConfig.GameDataConfigXmlPath;
-        string[] files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
-        for (int i = 0; i < files.Length; i++)
-        { 
-            EditorUtility.DisplayProgressBar("xml转binary", "正在扫描：" + files[i], 1.0f * i / files.Length);
-            string str1 = files[i].Substring(files[i].LastIndexOf("/") + 1);
-            if (str1.EndsWith(".xml")) {
-                string name = str1.Replace(".xml", "");
-                XmlToBinary(name);
-            } 
-        }
-
-        EditorUtility.ClearProgressBar();
-        AssetDatabase.Refresh();
-     }
-
+     
     private static void ClassToXml(string name)
     {
         if (string.IsNullOrEmpty(name))
@@ -844,25 +886,7 @@ public class ConfigDataEditor
         } 
     }
 
-    private static void XmlToBinary(string name) {
-        if (string.IsNullOrEmpty(name)) {
-            return;
-        }
-        Type _type = null;
-        foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            Type tempType = item.GetType(name);
-            if (tempType != null) {
-                _type = tempType;
-                break;
-            }
-        }
-        if (_type != null) {
-            string xmlPath = PathConfig.GameDataConfigXmlPath + name + ".xml";
-            object obj = GameDataConvert.XmlDeserializeInEditorMode(xmlPath, _type);
-            GameDataConvert.BinarySerialize(obj);
-        }
-    } 
+   
      
 }
 

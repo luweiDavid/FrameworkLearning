@@ -17,13 +17,21 @@ public class AssetBundleEditor : Editor {
 
     [MenuItem("Tools/BuildAssetBundle")]
     public static void Build()
-    { 
-        ABConfig abConfig = AssetDatabase.LoadAssetAtPath<ABConfig>(PathConfig.ABCONFIGASSETSPATH);
+    {
+        //配置资源的ab路径可以有两种方式，一是：生成.asset去配置， 二是：直接在代码中配置
+        ABPathConfig abPathConfig = AssetDatabase.LoadAssetAtPath<ABPathConfig>(PathConfig.ABCONFIGASSETSPATH);
+        if (abPathConfig == null)
+        {
+            Debug.LogError("没有配置资源路径");
+            return;
+        }
 
+        //ABPathConfig abPathConfig = new ABPathConfig();
+        
         m_AllFileDir.Clear();
         m_filterPathList.Clear();
         m_singlePrefabAllDepPathDic.Clear();
-        foreach (AllFileDirABName namePath in abConfig.m_AllFileDirAB) { 
+        foreach (PathABNameClass namePath in abPathConfig.m_pathABNameList) { 
             if (m_AllFileDir.ContainsKey(namePath.ABName))
             {
                 Debug.LogError("名称重复，请检查!");
@@ -35,7 +43,7 @@ public class AssetBundleEditor : Editor {
         }
 
         //获取m_AllPrefabPath文件夹下的所有文件（包括子文件夹的）
-        string[] prefabGuidArray = AssetDatabase.FindAssets("t:prefab", abConfig.m_AllPrefabPath.ToArray()); 
+        string[] prefabGuidArray = AssetDatabase.FindAssets("t:prefab", abPathConfig.m_prefabPathList.ToArray());
         for (int i = 0; i < prefabGuidArray.Length;i++) {
             string path = AssetDatabase.GUIDToAssetPath(prefabGuidArray[i]);
             EditorUtility.DisplayProgressBar("查找path", "prefab:" + path, (float)i / prefabGuidArray.Length); 
@@ -84,15 +92,18 @@ public class AssetBundleEditor : Editor {
         EditorUtility.ClearProgressBar();
     }
 
-    public static void BuildAssetBundle() {
+    public static void BuildAssetBundle()
+    {
         #region   生成配置表
         string[] allBundles = AssetDatabase.GetAllAssetBundleNames();   //直接得到不带后缀的包名
         //key为全路径，value为bundlename
         Dictionary<string, string> tempDic = new Dictionary<string, string>();
-        for (int i = 0; i < allBundles.Length; i++) {
+        for (int i = 0; i < allBundles.Length; i++)
+        {
             //Debug.Log(allBundles[i] + "    ----");
             string[] bundlePathArray = AssetDatabase.GetAssetPathsFromAssetBundle(allBundles[i]);
-            for (int j = 0; j < bundlePathArray.Length; j++) {
+            for (int j = 0; j < bundlePathArray.Length; j++)
+            {
                 //Debug.Log(allBundles[i] + "_______" + bundlePathArray[j]);
                 tempDic.Add(bundlePathArray[j], allBundles[i]);
             }
@@ -108,16 +119,19 @@ public class AssetBundleEditor : Editor {
         #endregion
 
         //执行打包
-        AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(PathConfig.Instance.GetABTargetPath(), 
+        AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(PathConfig.Instance.GetABTargetPath(),
             BuildAssetBundleOptions.ChunkBasedCompression, EditorUserBuildSettings.activeBuildTarget);
 
         if (manifest == null)
         {
             Debug.LogError("AssetBundle 打包失败");
         }
-        else {
+        else
+        {
             Debug.Log("AssetBundle 打包完成");
         }
+        AppBuildEditor.CopyABToStreamAssetsPath();
+        AssetDatabase.Refresh();
     }
 
     public static void CreateConfigTable(Dictionary<string,string> tempDic) {
@@ -180,7 +194,10 @@ public class AssetBundleEditor : Editor {
                 //不删除manifest文件，因为unity有个叫增量打包的概念，待查
                 if (File.Exists(info.FullName))
                 {
-                    File.Delete(info.FullName);
+                    File.Delete(info.FullName); 
+                    if (File.Exists(info.FullName + ".manifest")) {
+                        File.Delete(info.FullName + ".manifest");
+                    }
                 }
             }
         } 
@@ -201,6 +218,7 @@ public class AssetBundleEditor : Editor {
         if (importer == null)
         {
             Debug.LogError("不存在此路径：" + path);
+            return;
         }
         else { 
             importer.assetBundleName = name; 

@@ -10,7 +10,7 @@ public class PathConfig : Singleton<PathConfig> {
     //ab包的二进制文件路径
     public static string ABDataBaseBytesPath = "Assets/GameData/Config/ABDataBase.bytes";
     //需要打ab包的路径配置表的路径
-    public static string ABCONFIGASSETSPATH = "Assets/Editor/ABConfig.asset";
+    public static string ABCONFIGASSETSPATH = "Assets/Editor/ABPathConfig.asset";
     //ab包的存储路径
     public static string AssetBundleTargetPath = Application.streamingAssetsPath;
 

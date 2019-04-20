@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class GameRoot : MonoBehaviour {   
-    public const bool m_UseAssetBundleInEditor = true;
+    public const bool m_UseAssetBundleInEditor = false;
          
     private void Awake()
     {
@@ -23,12 +23,17 @@ public class GameRoot : MonoBehaviour {
         var entsys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         UIManager.Instance.Init(uiroot, uicamera, entsys);
         #endregion
-
-
+         
         InitConfig();
     }
     public void InitConfig() {
-
+        //游戏开始时，加载所有的二进制数据
+        string path = PathConfig.GameDataConfigBinaryPath + "MonsterData.bytes";
+        MonsterData monsData =  ConfigManager.Instance.LoadBinaryConfigData<MonsterData>(path);
+        foreach (MonsterDataStructure item in monsData.m_monsterDataDic.Values)
+        {
+            Debug.Log(item.Id + "  " + item.Name + "  " + item.OutLook + "   " + item.Type);
+        }
     }
 
     public void Start()

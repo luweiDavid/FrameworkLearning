@@ -12,8 +12,7 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
     public Dictionary<uint, AssetBundleItem> m_crcABItemDic = new Dictionary<uint, AssetBundleItem>();
     //AssetBundleItem的类对象池
     public ClassObjectPool<AssetBundleItem> m_abItemPool = ObjectsManager.Instance.GetClassObjectPool<AssetBundleItem>(2000);
-     
-
+      
     public void LoadABConfigData() { 
         AssetBundle abDataBundle = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/data");
         TextAsset dataTA = abDataBundle.LoadAsset<TextAsset>("ABDataBase");
@@ -72,7 +71,8 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
         if (!m_crcABItemDic.TryGetValue(nameCrc, out abItem))
         {
             AssetBundle tempAB = null; 
-            string fullPath = PathConfig.AssetBundleTargetPath + "/" + abName;  
+            string fullPath = PathConfig.AssetBundleTargetPath + "/" + abName;
+             
             tempAB = AssetBundle.LoadFromFile(fullPath);   //加载ab包
             if (tempAB == null)
             {
@@ -123,9 +123,14 @@ public class AssetBundleManager : Singleton<AssetBundleManager> {
         }
     }
 
-    public AssetBundleDataItem GetABDataItem(uint pathCrc) {
-        return m_crcDataItemDic[pathCrc];
-    } 
+    public AssetBundleDataItem GetABDataItem(uint pathCrc)
+    {
+        if (m_crcDataItemDic.ContainsKey(pathCrc))
+        {
+            return m_crcDataItemDic[pathCrc];
+        }
+        return null;
+    }
 }
 
 //单个ab块 

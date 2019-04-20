@@ -26,8 +26,16 @@ public class UIManager : Singleton<UIManager> {
 
         m_normalLayerTr = m_uiRoot.Find("NormalLayer").GetComponent<Transform>();
         m_normalLayerCanvas = m_normalLayerTr.GetComponent<Canvas>();
-    } 
+    }
 
+    /// <summary>
+    /// 根据UIPanelName 打开面板
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name"></param>
+    /// <param name="isTop">是否设置最顶层</param>
+    /// <param name="paramArray"></param>
+    /// <returns></returns>
     public T OpenWindow<T>(UIPanelName name, bool isTop = true, params object[] paramArray) where T : BaseView {
         if (!m_nameViewDic.ContainsKey(name))
         {
@@ -48,8 +56,6 @@ public class UIManager : Singleton<UIManager> {
                         if (panelConfig.Layer == UILayer.None || panelConfig.Layer == UILayer.NormalLayer)
                         {  
                             view.m_trans.SetParent(m_normalLayerTr); 
-                            //Debug.Log(view.m_trans.anchoredPosition + "  -after-  " + view.m_trans.sizeDelta
-                            //    + " --- " + view.m_trans.offsetMax + " --- " + view.m_trans.offsetMin + " --- " + view.m_trans.rect); 
                         }
                         else if(panelConfig.Layer == UILayer.BaseLayer) {
 
@@ -114,6 +120,13 @@ public class UIManager : Singleton<UIManager> {
         return null;
     }
 
+    /// <summary>
+    /// 异步加载sprite
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="targetImg"></param>
+    /// <param name="priority"></param>
+    /// <param name="isSetNativeSize"></param>
     public void AsyncLoadSprite(string path, Image targetImg, AsyncLoadPriority priority = AsyncLoadPriority.Middile, bool isSetNativeSize = false) {
         if (targetImg == null) {
             return;

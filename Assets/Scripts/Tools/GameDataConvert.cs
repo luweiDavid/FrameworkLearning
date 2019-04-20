@@ -115,7 +115,7 @@ public class GameDataConvert
         string savePath = PathConfig.GameDataConfigBinaryPath + obj.GetType().Name + ".bytes"; 
         try
         {
-            using (FileStream fs = new FileStream(savePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+            using (FileStream fs = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)) {
                 BinaryFormatter binaryF = new BinaryFormatter();
                 binaryF.Serialize(fs, obj);
             }

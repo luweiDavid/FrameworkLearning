@@ -5,13 +5,14 @@ using UnityEngine;
 public class ConfigManager : Singleton<ConfigManager>
 {
     public Dictionary<string, ConfigDataBase> m_configDataDic = new Dictionary<string, ConfigDataBase>();
-     
+
+
     /// <summary>
     /// 加载二进制配置
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="path">二进制文件路径</param>
-    /// <returns></returns>
+    /// <returns></returns> 
     public T LoadBinaryConfigData<T>(string binaryPath) where T : ConfigDataBase {
         if (string.IsNullOrEmpty(binaryPath)) {
             Debug.Log("二进制文件路径为空");

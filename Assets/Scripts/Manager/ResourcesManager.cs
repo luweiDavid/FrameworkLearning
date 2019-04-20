@@ -41,7 +41,12 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             }
             else {
                 tempObj = LoadABDataItemInEditorMode<T>(path);
-            } 
+            }
+
+            if (abDataItem == null) {
+                abDataItem = new AssetBundleDataItem();
+                abDataItem.Crc = pathCrc; 
+            }
             //这里得到的abDataItem是null的，但是tempObj是有值的（所以在编辑器不使用ab资源时，在释放时就不会有这个ab包）
             //所以在释放资源时，要用编辑器的卸载方法
         }
@@ -96,6 +101,11 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             else
             {
                 obj = LoadABDataItemInEditorMode<Object>(path);
+            }
+            if (dataItem == null)
+            {
+                dataItem = new AssetBundleDataItem();
+                dataItem.Crc = pathCrc;
             }
         }
 #endif
@@ -351,6 +361,12 @@ public class ResourcesManager : Singleton<ResourcesManager> {
             obj = LoadABDataItemInEditorMode<Object>(path);
 
             dataItem = AssetBundleManager.Instance.GetABDataItem(pathCrc);
+
+            if (dataItem == null)
+            {
+                dataItem = new AssetBundleDataItem();
+                dataItem.Crc = pathCrc;
+            }
         }
 #endif
         if (obj == null) {

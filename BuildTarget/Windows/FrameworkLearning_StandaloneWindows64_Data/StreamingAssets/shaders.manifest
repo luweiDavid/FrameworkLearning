@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 3137023000
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 682228aff6635e6c03a3828f43e4fd03
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 7e9ee104d6bb707fb2602b751e6f78b1
+HashAppended: 0
+ClassTypes:
+- Class: 48
+  Script: {instanceID: 0}
+Assets:
+- Assets/GameData/Shaders/Water.shader
+- Assets/GameData/Shaders/Skybox.shader
+- Assets/GameData/Shaders/Xray.shader
+Dependencies: []

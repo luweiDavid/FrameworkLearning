@@ -50,6 +50,17 @@ public class AssetBundleEditor : Editor {
 
             GameObject go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             //查找到prefab的路径后，检索出所有dependence（依赖项）
+
+            #region 这里过滤文件（FilterPath）有个bug， todo
+            //有这样一种情况，a.prefab, b.prefab同时使用了img1.png,img2.png这两张图片，
+            //并且这两个prefab不在同一个文件下，两张图片也没有打成ab包，这样的话,
+            //就会过滤掉b.prefab的依赖项，在加载b.prefab时就会出错
+            //所以不能在这个位置过滤，需要在写进二进制或xml数据时过滤
+            //因为在这里过滤的话，m_singlePrefabAllDepPathDic就不会有b.prefab
+            //的依赖了
+
+            #endregion
+
             string[] tempDependenceArray = AssetDatabase.GetDependencies(path); 
             List<string> tempList = new List<string>();
             if (!FilterPath(path)) { 
